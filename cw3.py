@@ -89,6 +89,7 @@ grid10 = [
 grids = [(grid1, 2, 2), (grid2, 2, 2), (grid3, 2, 2), (grid4, 2, 2), 
 		(grid5, 3, 3), (grid6, 3, 3), (grid7, 3, 3),
 		(grid8, 2, 3), (grid9, 2, 3), (grid10, 2, 3)]
+
 '''
 ===================================
 DO NOT CHANGE CODE ABOVE THIS LINE
@@ -164,6 +165,56 @@ def find_empty(grid):
 
 	return None
 
+def remove_possibilities(grid): #edit this to remove the stuff from the rows and columns
+
+	#grids[] tuple deconstruction
+    (grid, box_count_x, box_count_y) = grid
+
+	#check for 0 values and fail if the case (incomplete answer)
+    for row in grid:
+        for entry in row:
+            if entry == 0:
+                return False
+    
+	#rows
+	#make a list of False values 10 long
+	#look through the values, if its seen mark as true
+	#if value comes up again then fail as cant repeat
+    for row in grid:
+        seen = [False] * 10
+        for entry in row:
+            if seen[entry]:
+                return False
+            seen[entry] = True
+    
+	#columns
+	#does the same as above but for columns
+    for y in range(0, len(grid)):
+        seen = [False] * 10
+        for x in range(0, len(grid[y])):
+            entry = grid[y][x]
+            if seen[entry]:
+                return False
+            seen[entry] = True
+
+	#much like the above but this time checking it as per the 2x2, 2x3
+	#or 3x3 boxes rather than rows or columns
+    box_height = round(len(grid) / box_count_y)
+    box_width = round(len(grid[0]) / box_count_x)
+    
+    for base_Y in range(0, len(grid), box_height):
+        for base_X in range(0, len(grid[base_Y]), box_width):
+            seen = [False] * 10
+            for box_Y in range(0, box_height):
+                for box_X in range(0, box_width):
+                    entry = grid[base_Y + box_Y][base_X + box_X]
+                    if seen[entry]:
+                        return False
+                    seen[entry] = True
+    
+	#if it hasnt failed on the other tests then mark as correct
+    return True
+
 
 def recursive_solve(grid, n_rows, n_cols):
 	'''
@@ -208,20 +259,6 @@ def recursive_solve(grid, n_rows, n_cols):
 	#If we get here, we've tried all possible values. Return none to indicate the previous value is incorrect.
 	return None
 
-def random_solve(grid, n_rows, n_cols, max_tries=50000):
-	'''
-	This function uses random trial and error to solve a Sudoku grid
-
-	args: grid, n_rows, n_cols, max_tries
-	return: A solved grid (as a nested list), or the original grid if no solution is found
-	'''
-
-	for i in range(max_tries):
-		possible_solution = fill_board_randomly(grid, n_rows, n_cols)
-		if check_solution(possible_solution, n_rows, n_cols):
-			return possible_solution
-
-	return grid
 
 def fill_board_randomly(grid, n_rows, n_cols):
 	'''
@@ -245,13 +282,6 @@ def fill_board_randomly(grid, n_rows, n_cols):
 	return filled_grid 
 
 def solve(grid, n_rows, n_cols):
-
-	'''
-	Solve function for Sudoku coursework.
-	Comment out one of the lines below to either use the random or recursive solver
-	'''
-	
-	#return random_solve(grid, n_rows, n_cols)
 	return recursive_solve(grid, n_rows, n_cols)
 
 '''
