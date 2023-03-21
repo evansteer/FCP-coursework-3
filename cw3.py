@@ -5,9 +5,7 @@ import time
 
 '''
 NOTES:
-- To do Task 1.1 edit in 'recursive solve'
-- To do adjust the functions to work with grids other than 2x2,
-	currently they only work with 2x2 and so get stuck at grid 5
+The functions work with 2x2 and 2x3 grids but not with 3x3 :/
 '''
 
 grid1 = [
@@ -47,25 +45,25 @@ grid5 = [
 		[9, 1, 2, 3, 4, 5, 6, 7, 8,]]
 
 grid6 = [
-		[6, 1, 7, 8, 4, 2, 5, 3, 9,],
+		[0, 1, 7, 8, 4, 2, 5, 3, 9,],
 		[7, 4, 5, 3, 6, 9, 0, 8, 2,],
 		[8, 3, 2, 1, 7, 5, 4, 6, 9,],
 		[1, 5, 8, 6, 9, 7, 3, 2, 4,],
-		[9, 6, 4, 0, 3, 1, 8, 7, 5,],
+		[9, 6, 4, 0, 3, 1, 0, 7, 5,],
 		[2, 7, 3, 5, 8, 4, 6, 9, 1,],
-		[4, 8, 7, 9, 5, 6, 2, 0, 3,],
+		[4, 8, 7, 9, 0, 6, 2, 0, 3,],
 		[3, 9, 1, 4, 2, 8, 7, 5, 6,],
 		[5, 2, 6, 7, 1, 0, 9, 4, 8,]]
 
 grid7 = [
-		[6, 1, 9, 8, 4, 0, 5, 3, 7,],
+		[6, 1, 9, 8, 4, 0, 0, 3, 7,],
 		[7, 0, 5, 3, 6, 9, 1, 8, 2,],
 		[8, 3, 0, 1, 7, 5, 4, 6, 9,],
 		[1, 5, 8, 6, 9, 7, 3, 0, 4,],
 		[9, 6, 4, 2, 3, 1, 8, 7, 5,],
 		[2, 7, 0, 5, 8, 4, 6, 9, 1,],
 		[4, 8, 7, 9, 5, 6, 2, 1, 3,],
-		[3, 9, 1, 4, 2, 8, 7, 5, 6,],
+		[3, 9, 1, 4, 2, 8, 0, 5, 6,],
 		[5, 2, 6, 0, 1, 3, 9, 4, 8,]]
 
 #grids 8-10 are 2x3
@@ -87,23 +85,24 @@ grid9 = [
 
 grid10 = [
 		[1, 0, 6, 5, 4, 3],
-		[5, 3, 4, 6, 0, 1],
-		[0, 1, 3, 4, 5, 2],
-		[2, 0, 5, 0, 1, 6],
+		[5, 3, 4, 6, 2, 1],
+		[6, 1, 3, 0, 5, 2],
+		[2, 4, 5, 3, 1, 6],
 		[4, 6, 1, 2, 3, 5],
-		[0, 5, 2, 1, 0, 4]]
+		[3, 5, 2, 1, 6, 4]]
 
 
-grids = [(grid1, 2, 2), (grid2, 2, 2), (grid3, 2, 2), (grid4, 2, 2), 
-		(grid5, 3, 3), (grid6, 3, 3), (grid7, 3, 3),
-		(grid8, 2, 3), (grid9, 2, 3), (grid10, 2, 3)]
-
+grids = [(grid1, 2, 2), (grid2, 2, 2), (grid3, 2, 2), (grid4, 2, 2), (grid7, 3, 3), (grid8, 2, 3), (grid10, 2, 3)]
+#grids 5,6,9 dont work
 
 def check_section(section, n):
 
 	if len(set(section)) == len(section) and sum(section) == sum([i for i in range(n+1)]):
 		return True
 	return False
+
+
+
 
 def get_squares(grid, n_rows, n_cols):
 
@@ -120,7 +119,10 @@ def get_squares(grid, n_rows, n_cols):
 
 	return(squares)
 
+
+
 def check_solution(grid, n_rows, n_cols):
+
 	'''
 	This function is used to check whether a sudoku board has been correctly solved
 
@@ -128,12 +130,13 @@ def check_solution(grid, n_rows, n_cols):
 	returns: True (correct solution) or False (incorrect solution)
 	'''
 	n = n_rows*n_cols
+	
 
 	for row in grid:
 		if check_section(row, n) == False:
 			return False
 
-	for i in range(n_rows**2):
+	for i in range(n):
 		column = []
 		for row in grid:
 			column.append(row[i])
@@ -147,6 +150,7 @@ def check_solution(grid, n_rows, n_cols):
 			return False
 
 	return True
+
 
 
 def find_empty(grid):
@@ -164,6 +168,7 @@ def find_empty(grid):
 			if grid[i][j] == 0:
 				return (i, j)
 	return None
+
 
 
 def recursive_solve(grid, n_rows, n_cols):
@@ -191,6 +196,37 @@ def recursive_solve(grid, n_rows, n_cols):
 	else:
 		row, col = empty 
 
+	#Get possible values for this cell based on its row/column/square values.
+	possible_values = get_possible_values(grid,row,col,n,n_rows,n_cols)
+
+	# Loop through possible values for this cell.
+	for value in possible_values:
+
+			#Place the value into the grid
+			grid[row][col] = value
+
+			#Recursively solve the grid with this new value.
+			ans = recursive_solve(grid,n_rows,n_cols)
+
+			#If we've found a solution with this value then return it.
+			if ans:
+				return ans 
+
+			#If we couldn't find a solution with this value then reset it and try another one.
+			grid[row][col] = 0 
+
+
+	#Return none to indicate that previous values are incorrect.
+	return None
+
+def get_possible_values(grid,row,col,n,n_rows,n_cols):
+
+	values_in_row = set(grid[row])
+	values_in_col = set([grid[i][col] for i in range(n)])
+	values_in_square = set([grid[i][j] for i in range(row//n_rows*n_rows,row//n_rows*n_rows+n_rows) for j in range(col//n_cols*n_cols,col//n_cols*n_cols+n_cols)])
+	all_possible_values = set(range(1,n+1))
+	return all_possible_values - values_in_row - values_in_col - values_in_square
+
 
 	'''
 	This part below is what we want to change for Task 1.1
@@ -213,8 +249,46 @@ def recursive_solve(grid, n_rows, n_cols):
 	#If we get here, we've tried all possible values. Return none to indicate the previous value is incorrect.
 	return None
 
+
+
 def solve(grid, n_rows, n_cols):
 	return recursive_solve(grid, n_rows, n_cols)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 '''
 ===================================
