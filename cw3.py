@@ -1,11 +1,15 @@
 import random
 import copy
 import time
+import sys
+import argparse
 
+#Args parser for task 2
+parser = argparse.ArgumentParser()
 
 '''
 NOTES:
-The functions work with 2x2 and 2x3 grids but not with 3x3 :/
+Issues with grids 5,6,9 not sure why
 '''
 
 grid1 = [
@@ -204,7 +208,12 @@ def recursive_solve(grid, n_rows, n_cols):
 
 			#Place the value into the grid
 			grid[row][col] = value
-
+		
+			
+			#Add the hint flag.
+			#parser.add_argument('--hint', '-h', value,	action='store_const', const = value, help="Provide a hint (0-9).")
+			######
+			
 			#Recursively solve the grid with this new value.
 			ans = recursive_solve(grid,n_rows,n_cols)
 
@@ -263,38 +272,7 @@ def solve(grid, n_rows, n_cols):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-===================================
-DO NOT CHANGE CODE BELOW THIS LINE
-===================================
-'''
+#THIS CAN NOW BE EDITTED
 def main():
 
 	points = 0
@@ -317,6 +295,48 @@ def main():
 
 	print("====================================")
 	print("Test script complete, Total points: %d" % points)
+
+
+	'''
+	Task 2 stuff
+	'''
+
+	# Add the explain flag.
+	parser.add_argument('--explain', '-e', action='store_true', help="Explain the solution.")
+
+
+	# Add the profile flag.
+	parser.add_argument('--profile', '-p', action='store_true', help="Profile the solver.")
+
+	# Parse the arguments.
+	args = parser.parse_args()
+
+	# If the explain flag is given, print the explanation to the console.
+	if args.explain:
+		explain(args.grid)
+
+	# If the hint flag is given, print the hint to the console.
+	#if args.hint:
+	#	print_hint(args.grid, args.hint)
+
+	## If the profile flag is given, profile the solver.
+	#if args.profile:
+	#	profile_solver(args.grid, args.hint)
+
+	## If the –explain flag is given, print the explanation to the console.
+	#if sys.argv[1] == "--explain":
+	#	print(explain(solution))
+
+	## If the –hint flag is given, print the hint to the console.
+	#if sys.argv[1] == "--hint":
+	#	n = int(sys.argv[2])
+	#	print_hint(grid, n)
+
+	## If the –profile flag is given, profile the solver.
+	#if sys.argv[1] == "--profile":
+	#	profile_solver(grid, n)
+
+
 
 
 if __name__ == "__main__":
