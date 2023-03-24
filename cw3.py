@@ -8,7 +8,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--explain', action='store_true', help='Print out a set of instructions for solving the Sudoku puzzle')
 args = parser.parse_args()
-print(args.explain)
+
 
 '''
 EDGE CASE: If a row contains only 0s then it will throw a NoneType error,
@@ -99,15 +99,6 @@ grid9 =[
 		[0, 0, 1, 0, 0, 0],
 		[0, 5, 0, 0, 6, 4]]
 
-grid1 = [
-        [0, 0, 0, 0, 8, 3],
-        [5, 0, 9, 2, 0, 0],
-        [0, 1, 0, 4, 0, 0],
-        [0, 0, 0, 0, 5, 6],
-        [0, 0, 1, 0, 0, 0],
-        [0, 5, 0, 0, 6, 0]]
-
-
 grid10 = [
 		[1, 0, 6, 5, 4, 3],
 		[5, 0, 4, 6, 2, 1],
@@ -174,7 +165,12 @@ def check_solution(grid, n_rows, n_cols):
 
 
 def find_empty(grid):
-
+	'''
+	This function returns the index (i, j) to the first zero element in a sudoku grid
+	If no such element is found, it returns None
+	args: grid
+	return: A tuple (i,j) where i and j are both integers, or None
+	'''
 	for i in range(len(grid)):
 		row = grid[i]
 		for j in range(len(row)):
