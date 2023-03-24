@@ -183,8 +183,18 @@ def find_empty(grid):
 	return None
 
 
+def get_possible_values(grid,row,col,n,n_rows,n_cols):
+
+	values_in_row = set(grid[row])
+	values_in_col = set([grid[i][col] for i in range(n)])
+	values_in_square = set([grid[i][j] for i in range(row//n_rows*n_rows,row//n_rows*n_rows+n_rows) for j in range(col//n_cols*n_cols,col//n_cols*n_cols+n_cols)])
+	all_possible_values = set(range(1,n+1))
+	return all_possible_values - values_in_row - values_in_col - values_in_square
 
 def recursive_solve(grid, n_rows, n_cols, explain):
+	"""
+	Recursive Soduku solver by removing all possible values
+	"""
 
 	#N is the maximum integer considered in this board
 	n = n_rows*n_cols
@@ -226,14 +236,6 @@ def recursive_solve(grid, n_rows, n_cols, explain):
 
 	#Return none to indicate that previous values are incorrect.
 	return None
-
-def get_possible_values(grid,row,col,n,n_rows,n_cols):
-
-	values_in_row = set(grid[row])
-	values_in_col = set([grid[i][col] for i in range(n)])
-	values_in_square = set([grid[i][j] for i in range(row//n_rows*n_rows,row//n_rows*n_rows+n_rows) for j in range(col//n_cols*n_cols,col//n_cols*n_cols+n_cols)])
-	all_possible_values = set(range(1,n+1))
-	return all_possible_values - values_in_row - values_in_col - values_in_square
 
 
 
