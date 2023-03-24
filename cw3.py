@@ -6,10 +6,19 @@ import argparse
 
 #Args parser for task 2
 parser = argparse.ArgumentParser()
+parser.add_argument('--explain', action='store_true', help='Print out a set of instructions for solving the Sudoku puzzle')
+args = parser.parse_args()
+print(args.explain)
 
 '''
-NOTES:
-Issues with grids 5,6,9 not sure why
+EDGE CASE: If a row contains only 0s then it will throw a NoneType error,
+this is because the sum of the row is 0 so python returns that as False.
+Its kinda weird and we can't do anything about it :/
+
+CONFIRM: whether the grids will be 2x3 or 3x2 as this is a very important difference
+
+FLAGS: To run flags you need to use gitbash. If you want to run the flag --explain for example,
+you need to do 'python cw3.py --explain'
 '''
 
 grid1 = [
@@ -39,28 +48,28 @@ grid4 = [
 #Grids 4-7 are 3x3
 grid5 = [
 	[0, 0, 0, 0, 3, 0, 7, 0, 0],
-[0, 5, 0, 0, 0, 0, 0, 9, 0],
-[0, 0, 0, 0, 9, 0, 0, 0, 1],
-[1, 0, 0, 0, 7, 0, 4, 0, 0],
-[8, 0, 0, 0, 0, 0, 0, 0, 5],
-[0, 0, 7, 0, 6, 0, 0, 0, 0],
-[0, 0, 3, 0, 0, 0, 0, 0, 0],
-[0, 4, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 1, 0, 0, 0, 8, 0]]
+	[0, 5, 0, 0, 0, 0, 0, 9, 0],
+	[0, 0, 0, 0, 9, 0, 0, 0, 1],
+	[1, 0, 0, 0, 7, 0, 4, 0, 0],
+	[8, 0, 0, 0, 0, 0, 0, 0, 5],
+	[0, 0, 7, 0, 6, 0, 0, 0, 0],
+	[0, 0, 3, 0, 0, 0, 0, 0, 0],
+	[0, 4, 0, 0, 0, 0, 0, 0, 0],
+	[0, 0, 0, 1, 0, 0, 0, 8, 0]]
 
 
 
 grid6 = [
-[0, 0, 0, 0, 4, 2, 0, 0, 0],
-[7, 0, 5, 0, 6, 9, 0, 8, 2],
-[8, 3, 0, 0, 0, 0, 0, 0, 9],
-[1, 0, 0, 0, 9, 7, 0, 0, 4],
-[9, 6, 0, 0, 0, 0, 8, 0, 0],
-[0, 0, 3, 0, 8, 4, 6, 0, 1],
-[4, 0, 0, 9, 0, 6, 2, 0, 3],
-[0, 0, 1, 0, 2, 8, 0, 5, 0],
-[5, 0, 6, 0, 1, 0, 0, 4, 8]
-]
+		[0, 0, 0, 0, 4, 2, 0, 0, 0],
+		[7, 0, 5, 0, 6, 9, 0, 8, 2],
+		[8, 3, 0, 0, 0, 0, 0, 0, 9],
+		[1, 0, 0, 0, 9, 7, 0, 0, 4],
+		[9, 6, 0, 0, 0, 0, 8, 0, 0],
+		[0, 0, 3, 0, 8, 4, 6, 0, 1],
+		[4, 0, 0, 9, 0, 6, 2, 0, 3],
+		[0, 0, 1, 0, 2, 8, 0, 5, 0],
+		[5, 0, 6, 0, 1, 0, 0, 4, 8]
+		]
 
 grid7 = [
 		[6, 1, 9, 8, 4, 0, 0, 3, 7,],
@@ -103,14 +112,13 @@ grid10 = [
 grids = [(grid1, 2, 2), (grid2, 2, 2), (grid3, 2, 2), (grid4, 2, 2), 
 		 (grid5, 3, 3), (grid6,3,3), (grid7, 3, 3), 
 		 (grid8, 2, 3), (grid9, 2, 3), (grid10, 2, 3)]
-#grids 5,6,9 dont work
+
 
 def check_section(section, n):
 
 	if len(set(section)) == len(section) and sum(section) == sum([i for i in range(n+1)]):
 		return True
 	return False
-
 
 
 
@@ -133,12 +141,6 @@ def get_squares(grid, n_rows, n_cols):
 
 def check_solution(grid, n_rows, n_cols):
 
-	'''
-	This function is used to check whether a sudoku board has been correctly solved
-
-	args: grid - representation of a suduko board as a nested list.
-	returns: True (correct solution) or False (incorrect solution)
-	'''
 	n = n_rows*n_cols
 	
 	print(grid)
@@ -164,13 +166,6 @@ def check_solution(grid, n_rows, n_cols):
 
 
 def find_empty(grid):
-	'''
-	This function returns the index (i, j) to the first zero element in a sudoku grid
-	If no such element is found, it returns None
-
-	args: grid
-	return: A tuple (i,j) where i and j are both integers, or None
-	'''
 
 	for i in range(len(grid)):
 		row = grid[i]
@@ -181,14 +176,7 @@ def find_empty(grid):
 
 
 
-def recursive_solve(grid, n_rows, n_cols):
-	'''
-	This function uses recursion to exhaustively search all possible solutions to a grid
-	until the solution is found
-
-	args: grid, n_rows, n_cols
-	return: A solved grid (as a nested list), or None
-	'''
+def recursive_solve(grid, n_rows, n_cols, explain):
 
 	#N is the maximum integer considered in this board
 	n = n_rows*n_cols
@@ -214,17 +202,14 @@ def recursive_solve(grid, n_rows, n_cols):
 
 			#Place the value into the grid
 			grid[row][col] = value
-		
-			
-			#Add the hint flag.
-			#parser.add_argument('--hint', '-h', value,	action='store_const', const = value, help="Provide a hint (0-9).")
-			######
-			
+	
 			#Recursively solve the grid with this new value.
-			ans = recursive_solve(grid,n_rows,n_cols)
+			ans = recursive_solve(grid,n_rows,n_cols,args.explain)
 
 			#If we've found a solution with this value then return it.
 			if ans:
+				if explain:
+					print(f"Put {value} in location ({row+1}, {col+1})")
 				return ans 
 
 			#If we couldn't find a solution with this value then reset it and try another one.
@@ -243,31 +228,9 @@ def get_possible_values(grid,row,col,n,n_rows,n_cols):
 	return all_possible_values - values_in_row - values_in_col - values_in_square
 
 
-	'''
-	This part below is what we want to change for Task 1.1
-	'''
-	#Loop through possible values
-	for i in range(1, n+1):
-
-			#Place the value into the grid
-			grid[row][col] = i
-			#Recursively solve the grid
-			ans = recursive_solve(grid, n_rows, n_cols)
-			#If we've found a solution, return it
-			if ans:
-				return ans 
-
-			#If we couldn't find a solution, that must mean this value is incorrect.
-			#Reset the grid for the next iteration of the loop
-			grid[row][col] = 0 
-
-	#If we get here, we've tried all possible values. Return none to indicate the previous value is incorrect.
-	return None
-
-
 
 def solve(grid, n_rows, n_cols):
-	return recursive_solve(grid, n_rows, n_cols)
+	return recursive_solve(grid, n_rows, n_cols, args.explain)
 
 
 
@@ -294,47 +257,6 @@ def main():
 
 	print("====================================")
 	print("Test script complete, Total points: %d" % points)
-
-
-	'''
-	Task 2 stuff
-	'''
-
-	# Add the explain flag.
-	parser.add_argument('--explain', '-e', action='store_true', help="Explain the solution.")
-
-
-	# Add the profile flag.
-	parser.add_argument('--profile', '-p', action='store_true', help="Profile the solver.")
-
-	# Parse the arguments.
-	args = parser.parse_args()
-
-	# If the explain flag is given, print the explanation to the console.
-	if args.explain:
-		explain(args.grid)
-
-	# If the hint flag is given, print the hint to the console.
-	#if args.hint:
-	#	print_hint(args.grid, args.hint)
-
-	## If the profile flag is given, profile the solver.
-	#if args.profile:
-	#	profile_solver(args.grid, args.hint)
-
-	## If the –explain flag is given, print the explanation to the console.
-	#if sys.argv[1] == "--explain":
-	#	print(explain(solution))
-
-	## If the –hint flag is given, print the hint to the console.
-	#if sys.argv[1] == "--hint":
-	#	n = int(sys.argv[2])
-	#	print_hint(grid, n)
-
-	## If the –profile flag is given, profile the solver.
-	#if sys.argv[1] == "--profile":
-	#	profile_solver(grid, n)
-
 
 
 
