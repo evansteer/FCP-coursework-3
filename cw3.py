@@ -1,12 +1,10 @@
-import random
-import copy
-import time
-import sys
-import argparse
+import random, copy, time, sys, argparse
+
 
 #Args parser for task 2
 parser = argparse.ArgumentParser()
 parser.add_argument('--explain', action='store_true', help='Print out a set of instructions for solving the Sudoku puzzle')
+parser.add_argument('--hint', '-n', type=int, help='Return grid with N values filled in')
 args = parser.parse_args()
 
 
@@ -240,29 +238,48 @@ def solve(grid, n_rows, n_cols):
 
 
 
+def hint(grid):
+        # make a copy of the grid
+        hint_grid = copy.deepcopy(grid)
+        # randomly choose N cells to fill in
+        cells = random.sample([(i, j) for i in range(4) for j in range(4) if grid[i][j] == 0], args.hint)
+        for cell in cells:
+            # fill in the cell with a random valid value
+            row, col = cell
+            values = [i for i in range(1, 5) if check_solution(hint_grid, row, col)]
+            hint_grid[row][col] = random.choice(values)
+        # print the hint grid
+        for row in hint_grid:
+            print(row)
+
 #THIS CAN NOW BE EDITTED
 def main():
 
 	points = 0
 
-	print("Running test script for coursework 1")
-	print("====================================")
-	
-	for (i, (grid, n_rows, n_cols)) in enumerate(grids):
-		print("Solving grid: %d" % (i+1))
-		start_time = time.time()
-		solution = solve(grid, n_rows, n_cols)
-		elapsed_time = time.time() - start_time
-		print("Solved in: %f seconds" % elapsed_time)
-		print(solution)
-		if check_solution(solution, n_rows, n_cols):
-			print("grid %d correct" % (i+1))
-			points = points + 10
-		else:
-			print("grid %d incorrect" % (i+1))
+	if args.hint:
+		hint(grid5)
 
-	print("====================================")
-	print("Test script complete, Total points: %d" % points)
+	else:
+
+		print("Running test script for coursework 1")
+		print("====================================")
+	
+		for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+			print("Solving grid: %d" % (i+1))
+			start_time = time.time()
+			solution = solve(grid, n_rows, n_cols)
+			elapsed_time = time.time() - start_time
+			print("Solved in: %f seconds" % elapsed_time)
+			print(solution)
+			if check_solution(solution, n_rows, n_cols):
+				print("grid %d correct" % (i+1))
+				points = points + 10
+			else:
+				print("grid %d incorrect" % (i+1))
+
+		print("====================================")
+		print("Test script complete, Total points: %d" % points)
 
 
 
