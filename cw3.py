@@ -225,7 +225,7 @@ def recursive_solve(grid, n_rows, n_cols, explain, hint, depth):
 			grid[row][col] = value
 	
 			#Recursively solve the grid with this new value.
-			ans = recursive_solve(grid,n_rows,n_cols,args.explain)
+			ans = recursive_solve(grid,n_rows,n_cols, explain, hint, depth+1)
 
 			#If we've found a solution with this value then return it.
 			if ans:
