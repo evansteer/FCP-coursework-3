@@ -1,12 +1,4 @@
-import random
-import copy
-import time
-import sys
-import argparse
-import random
-import copy
-import matplotlib.pyplot as plt
-
+import random, copy, time, argparse, random, copy, matplotlib.pyplot as plt
 
 #Args parser for task 2
 parser = argparse.ArgumentParser()
