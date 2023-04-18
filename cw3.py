@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 
 #Args parser for task 2
 parser = argparse.ArgumentParser()
-parser.add_argument('--explain', action='store_true', help='Print out a set of instructions for solving the Sudoku puzzle')
+parser.add_argument('--explain', action='store_true', 
+		    help='Print out a set of instructions for solving the Sudoku puzzle')
 parser.add_argument('--profile', action='store_true',
                     help='Measures the performance of the solver(s) in terms of time for grids of different size and difficulties')
 parser.add_argument('--hint', type=int, help='Returns a grid with N values filled in')
