@@ -3,10 +3,16 @@ import copy
 import time
 import sys
 import argparse
+import random
+import copy
+import matplotlib.pyplot as plt
 
 #Args parser for task 2
 parser = argparse.ArgumentParser()
 parser.add_argument('--explain', action='store_true', help='Print out a set of instructions for solving the Sudoku puzzle')
+parser.add_argument('--profile', action='store_true',
+                    help='Measures the performance of the solver(s) in terms of time for grids of different size and difficulties')
+parser.add_argument('--hint', type=int, help='Returns a grid with N values filled in')
 args = parser.parse_args()
 
 
@@ -187,7 +193,7 @@ def get_possible_values(grid,row,col,n,n_rows,n_cols):
 	all_possible_values = set(range(1,n+1))
 	return all_possible_values - values_in_row - values_in_col - values_in_square
 
-def recursive_solve(grid, n_rows, n_cols, explain):
+def recursive_solve(grid, n_rows, n_cols, explain, hint, depth):
 	"""
 	Recursive Soduku solver by removing all possible values
 	"""
@@ -222,8 +228,14 @@ def recursive_solve(grid, n_rows, n_cols, explain):
 
 			#If we've found a solution with this value then return it.
 			if ans:
-				if explain:
+				if explain and hint is None:
 					print(f"Put {value} in location ({row+1}, {col+1})")
+				elif explain and hint is not None and depth <= hint:
+                			print(f"Put {value} in location ({row + 1}, {col + 1})")
+				
+				if hint is not None and depth > hint:
+                			ans[row][col] = 0
+				
 				return ans 
 
 			#If we couldn't find a solution with this value then reset it and try another one.
@@ -236,9 +248,110 @@ def recursive_solve(grid, n_rows, n_cols, explain):
 
 
 def solve(grid, n_rows, n_cols):
-	return recursive_solve(grid, n_rows, n_cols, args.explain)
+	# We set the minimun value of depth as 1
+	return recursive_solve(grid, n_rows, n_cols, args.explain, args.hint, 1)
 
 
+# The function calls two other functions
+def measure_performance():
+    print("Running performance measurement")
+    print("====================================\n")
+    compare_different_size()
+    compare_different_difficulty()
+
+
+def compare_different_size():
+    print("\nMeasuring the performance of solvers in terms of time for grids of different size")
+    print("====================================")
+    # For grids of size 2x2, the elapsed time for each run is added to time_for_2x2 list
+    time_for_2x2 = []
+    # For grids of size 3x2, the elapsed time is added to time_for_3x2 list
+    time_for_3x2 = []
+    # For grids of size 3x3, the elapsed time is added to time_for_3x3 list
+    time_for_3x3 = []
+
+    for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+        if i in [0, 1, 2, 3]:
+            # We run these codes 100 times to get average value
+            for _ in range(100):
+                start_time = time.time()
+                solve(grid, n_rows, n_cols)
+                elapsed_time = time.time() - start_time
+                time_for_2x2.append(elapsed_time)
+        elif i in [4, 5, 6]:
+            for _ in range(100):
+                start_time = time.time()
+                solve(grid, n_rows, n_cols)
+                elapsed_time = time.time() - start_time
+                time_for_3x3.append(elapsed_time)
+        else:
+            for _ in range(100):
+                start_time = time.time()
+                solve(grid, n_rows, n_cols)
+                elapsed_time = time.time() - start_time
+                time_for_3x2.append(elapsed_time)
+
+    avg_time_for_2x2 = sum(time_for_2x2) / len(time_for_2x2)
+    avg_time_for_3x2 = sum(time_for_3x2) / len(time_for_3x2)
+    avg_time_for_3x3 = sum(time_for_3x3) / len(time_for_3x3)
+
+    plt.bar(["2x2", "3x2", "3x3"], [avg_time_for_2x2, avg_time_for_3x2, avg_time_for_3x3])
+    plt.xlabel("Grid Size")
+    plt.ylabel("Average Time")
+    plt.title("the performance of solvers in terms of time for grids of different size")
+    plt.show()
+
+
+def compare_different_difficulty():
+    print("\nMeasuring the performance of solvers in terms of time for grids of different difficulties")
+    print("====================================")
+    grid = [[6, 1, 9, 8, 4, 2, 5, 3, 7, ],
+            [7, 4, 5, 3, 6, 9, 1, 8, 2, ],
+            [8, 3, 2, 1, 7, 5, 4, 6, 9, ],
+            [1, 5, 8, 6, 9, 7, 3, 2, 4, ],
+            [9, 6, 4, 2, 3, 1, 8, 7, 5, ],
+            [2, 7, 3, 5, 8, 4, 6, 9, 1, ],
+            [4, 8, 7, 9, 5, 6, 2, 1, 3, ],
+            [3, 9, 1, 4, 2, 8, 7, 5, 6, ],
+            [5, 2, 6, 7, 1, 3, 9, 4, 8, ]]
+    # We crean empty dictionary dic to store the elapsed time for each difficulty level
+    dic = {}
+    # For each difficulty level (increasing from 1 to 60)
+    for i in range(60):
+        # The unfilled location increasing by one after this code is run once
+        num_of_unfilled_locations = i+1
+        # It randomly selects a location in the grid that is not already empty, empties it
+        dic[num_of_unfilled_locations] = []
+        row = random.randint(0, 8)
+        col = random.randint(0, 8)
+        while grid[row][col] == 0:
+            row = random.randint(0, 8)
+            col = random.randint(0, 8)
+        grid[row][col] = 0
+        grid_copy = copy.deepcopy(grid)
+        # We runs the solver 100 times
+        for _ in range(100):
+            start_time = time.time()
+            solve(grid_copy, 3, 3)
+            elapsed_time = time.time() - start_time
+            # It stores the elapsed time in the corresponding list in dic
+            dic[num_of_unfilled_locations].append(elapsed_time)
+
+    num_of_unfilled_locations_list = []
+    # The average elapsed time for each difficulty level is stored in avg_elapsed_time_list
+    avg_elapsed_time_list = []
+
+    for num_of_unfilled_locations, elapsed_time_list in dic.items():
+        num_of_unfilled_locations_list.append(num_of_unfilled_locations)
+        avg_elapsed_time = sum(elapsed_time_list) / len(elapsed_time_list)
+        avg_elapsed_time_list.append(avg_elapsed_time)
+        
+    # It plots a bar chart showing the average elapsed time for each difficulty level
+    plt.bar(num_of_unfilled_locations_list, avg_elapsed_time_list)
+    plt.xlabel("Number of Unfilled Locations")
+    plt.ylabel("Average Time")
+    plt.title("the performance of solvers in terms of time for grids of different difficulties (specified by number of unfilled locations)")
+    plt.show()
 
 #THIS CAN NOW BE EDITTED
 def main():
