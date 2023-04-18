@@ -121,6 +121,7 @@ def check_section(section, n):
 
 
 
+
 def get_squares(grid, n_rows, n_cols):
 
 	squares = []
@@ -135,6 +136,7 @@ def get_squares(grid, n_rows, n_cols):
 			squares.append(square)
 
 	return(squares)
+
 
 
 
@@ -179,6 +181,7 @@ def find_empty(grid):
 	return None
 
 
+
 def get_possible_values(grid,row,col,n,n_rows,n_cols):
 
 	values_in_row = set(grid[row])
@@ -186,6 +189,8 @@ def get_possible_values(grid,row,col,n,n_rows,n_cols):
 	values_in_square = set([grid[i][j] for i in range(row//n_rows*n_rows,row//n_rows*n_rows+n_rows) for j in range(col//n_cols*n_cols,col//n_cols*n_cols+n_cols)])
 	all_possible_values = set(range(1,n+1))
 	return all_possible_values - values_in_row - values_in_col - values_in_square
+
+
 
 def recursive_solve(grid, n_rows, n_cols, explain, hint, depth):
 	"""
@@ -246,12 +251,15 @@ def solve(grid, n_rows, n_cols):
 	return recursive_solve(grid, n_rows, n_cols, args.explain, args.hint, 1)
 
 
+
 # The function calls two other functions
 def measure_performance():
     print("Running performance measurement")
     print("====================================\n")
     compare_different_size()
     compare_different_difficulty()
+
+
 
 
 def compare_different_size():
@@ -294,6 +302,8 @@ def compare_different_size():
     plt.ylabel("Average Time")
     plt.title("the performance of solvers in terms of time for grids of different size")
     plt.show()
+
+
 
 
 def compare_different_difficulty():
@@ -346,6 +356,9 @@ def compare_different_difficulty():
     plt.ylabel("Average Time")
     plt.title("the performance of solvers in terms of time for grids of different difficulties (specified by number of unfilled locations)")
     plt.show()
+	
+
+
 
 def hint(grid):
         # make a copy of the grid
@@ -361,7 +374,8 @@ def hint(grid):
         for row in hint_grid:
             print(row)
 
-#THIS CAN NOW BE EDITTED
+
+
 def main():
 
 	points = 0
