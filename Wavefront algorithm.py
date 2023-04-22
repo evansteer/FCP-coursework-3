@@ -1,6 +1,6 @@
 
 
-def present_values(grid, row, col):
+def wavefront_present_values(grid, row, col):
     box_row = (row // 3) * 3
     box_col = (col // 3) * 3
     square = []
@@ -36,7 +36,7 @@ def present_values(grid, row, col):
     return present_values
 
 
-def amend_lists(grid):
+def wavefront_amend_lists(grid):
     all_values = [1,2,3,4,5,6,7,8,9]
     
     for row in range(9):
@@ -53,7 +53,7 @@ def amend_lists(grid):
         
 
 
-def fill_cells(grid):
+def wavefront_fill_cells(grid):
     all_values = [1,2,3,4,5,6,7,8,9]
 
     for row in range(9):
@@ -66,7 +66,7 @@ def fill_cells(grid):
                         grid[row][col] = i
     return grid
 
-def solve(grid):
+def wavefront_solve(grid):
     fill_cells(grid)
     
     for row in range(9):
