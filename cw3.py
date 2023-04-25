@@ -11,7 +11,6 @@ parser.add_argument('--hint', type=int, help='Returns a grid with N values fille
 parser.add_argument('-f', '--file', type=str, help='The path to the file containing the Sudoku grid.')
 args = parser.parse_args()
 
-
 #Grids 1-4 are 2x2
 grid1 = [
 		[1, 0, 4, 2],

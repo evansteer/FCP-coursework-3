@@ -117,6 +117,7 @@ def smallest_empty(grid):
                 smallest_row, smallest_col = row, col
                 
     print(smallest_row, smallest_col)
+    print("Smallest: ", smallest)
     grid[smallest_row][smallest_col] = random.choice(smallest)
     amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col])
     
