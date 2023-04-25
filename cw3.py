@@ -4,12 +4,14 @@ import matplotlib.pyplot as plt
 #Args parser for task 2
 parser = argparse.ArgumentParser()
 parser.add_argument('--explain', action='store_true', 
-		    help='Print out a set of instructions for solving the Sudoku puzzle')
+			help='Print out a set of instructions for solving the Sudoku puzzle')
 parser.add_argument('--profile', action='store_true',
-                    help='Measures the performance of the solver(s) in terms of time for grids of different size and difficulties')
+					help='Measures the performance of the solver(s) in terms of time for grids of different size and difficulties')
 parser.add_argument('--hint', type=int, help='Returns a grid with N values filled in')
 parser.add_argument('-f', '--file', type=str, help='The path to the file containing the Sudoku grid.')
 args = parser.parse_args()
+
+wavefront = False
 
 #Grids 1-4 are 2x2
 grid1 = [
@@ -107,15 +109,15 @@ explanation = []
 
 def check_section(section, n):
 	"""
-    Check if the given section is valid for a partition of n.
+	Check if the given section is valid for a partition of n.
 
-    Args:
-    section (list): A list of integers representing a section of the partition.
-    n (int): An integer representing the total number being partitioned.
+	Args:
+	section (list): A list of integers representing a section of the partition.
+	n (int): An integer representing the total number being partitioned.
 
-    Returns:
-    bool: True if the section is valid, False otherwise.
-    """
+	Returns:
+	bool: True if the section is valid, False otherwise.
+	"""
 	if len(set(section)) == len(section) and sum(section) == sum([i for i in range(n+1)]):
 		return True
 	return False
@@ -125,16 +127,16 @@ def check_section(section, n):
 
 def get_squares(grid, n_rows, n_cols):
 	"""
-    Returns a list of all the square sub-grids of the given size in the given grid.
-    
-    Args:
-    - grid (list): A 2D list representing the grid.
-    - n_rows (int): The number of rows in each square sub-grid.
-    - n_cols (int): The number of columns in each square sub-grid.
-    
-    Returns:
-    - squares (list): A list of all the square sub-grids in the grid, represented as 1D lists.
-    """
+	Returns a list of all the square sub-grids of the given size in the given grid.
+	
+	Args:
+	- grid (list): A 2D list representing the grid.
+	- n_rows (int): The number of rows in each square sub-grid.
+	- n_cols (int): The number of columns in each square sub-grid.
+	
+	Returns:
+	- squares (list): A list of all the square sub-grids in the grid, represented as 1D lists.
+	"""
 	squares = []
 	for i in range(n_cols):
 		rows = (i*n_rows, (i+1)*n_rows)
@@ -153,16 +155,16 @@ def get_squares(grid, n_rows, n_cols):
 
 def check_solution(grid, n_rows, n_cols):
 	"""
-    Checks if a given grid is a valid solution to a Sudoku puzzle.
+	Checks if a given grid is a valid solution to a Sudoku puzzle.
 
-    Args:
-    - grid (List[List[int]]): a 2D list representing the grid to be checked
-    - n_rows (int): the number of rows in each sub-grid
-    - n_cols (int): the number of columns in each sub-grid
+	Args:
+	- grid (List[List[int]]): a 2D list representing the grid to be checked
+	- n_rows (int): the number of rows in each sub-grid
+	- n_cols (int): the number of columns in each sub-grid
 
-    Returns:
-    - bool: True if the grid is a valid solution, False otherwise
-    """
+	Returns:
+	- bool: True if the grid is a valid solution, False otherwise
+	"""
 	n = n_rows*n_cols
 	
 	print(grid)
@@ -188,67 +190,67 @@ def check_solution(grid, n_rows, n_cols):
 
 
 def find_empty(grid):
-    """
-    Returns the coordinates of the next empty cell (with a value of 0) in the grid, in the form of a tuple (row, col). 
-    If there are no empty cells, returns None.
+	"""
+	Returns the coordinates of the next empty cell (with a value of 0) in the grid, in the form of a tuple (row, col). 
+	If there are no empty cells, returns None.
 
-    Args:
-    - grid (List[List[int]]): a 2D list representing the grid to be checked
-    
-    Returns:
-    - A tuple containing the row and column coordinates of the next empty cell, or None if there are no empty cells.
-    """
-    
-    for i in range(len(grid)):
-        row = grid[i]
-        for j in range(len(row)):
-            if grid[i][j] == 0:
-                return (i, j)
-    return None
+	Args:
+	- grid (List[List[int]]): a 2D list representing the grid to be checked
+	
+	Returns:
+	- A tuple containing the row and column coordinates of the next empty cell, or None if there are no empty cells.
+	"""
+	
+	for i in range(len(grid)):
+		row = grid[i]
+		for j in range(len(row)):
+			if grid[i][j] == 0:
+				return (i, j)
+	return None
 
 
 
 def get_possible_values(grid,row,col,n,n_rows,n_cols):
-    """
-    Get the possible values that can be assigned to a given cell in the grid.
+	"""
+	Get the possible values that can be assigned to a given cell in the grid.
 
-    Args:
-        grid (list): A 2D list representing the Sudoku grid.
-        row (int): The row index of the cell.
-        col (int): The column index of the cell.
-        n (int): The maximum value that can be assigned to a cell.
-        n_rows (int): The number of rows in each square of the grid.
-        n_cols (int): The number of columns in each square of the grid.
+	Args:
+		grid (list): A 2D list representing the Sudoku grid.
+		row (int): The row index of the cell.
+		col (int): The column index of the cell.
+		n (int): The maximum value that can be assigned to a cell.
+		n_rows (int): The number of rows in each square of the grid.
+		n_cols (int): The number of columns in each square of the grid.
 
-    Returns:
-        set: A set of integers representing the possible values that can be assigned
-             to the given cell without violating the rules of Sudoku.
-    """
-    
-    values_in_row = set(grid[row])
-    values_in_col = set([grid[i][col] for i in range(n)])
-    values_in_square = set([grid[i][j] for i in range(row//n_rows*n_rows,row//n_rows*n_rows+n_rows) for j in range(col//n_cols*n_cols,col//n_cols*n_cols+n_cols)])
-    all_possible_values = set(range(1,n+1))
-    return all_possible_values - values_in_row - values_in_col - values_in_square
+	Returns:
+		set: A set of integers representing the possible values that can be assigned
+			 to the given cell without violating the rules of Sudoku.
+	"""
+	
+	values_in_row = set(grid[row])
+	values_in_col = set([grid[i][col] for i in range(n)])
+	values_in_square = set([grid[i][j] for i in range(row//n_rows*n_rows,row//n_rows*n_rows+n_rows) for j in range(col//n_cols*n_cols,col//n_cols*n_cols+n_cols)])
+	all_possible_values = set(range(1,n+1))
+	return all_possible_values - values_in_row - values_in_col - values_in_square
 
 
 
 def recursive_solve(grid, n_rows, n_cols, explain, hint, depth):
 	"""
-    Recursively solves a Sudoku puzzle using backtracking algorithm.
+	Recursively solves a Sudoku puzzle using backtracking algorithm.
 
-    Args:
-        grid (list): A 2D list representing the Sudoku puzzle.
-        n_rows (int): The number of rows in each square.
-        n_cols (int): The number of columns in each square.
-        explain (bool): A boolean flag to indicate whether to print the steps to solve the puzzle.
-        hint (int or None): An integer value indicating the maximum depth of recursion to print steps.
-        depth (int): The depth of recursion.
+	Args:
+		grid (list): A 2D list representing the Sudoku puzzle.
+		n_rows (int): The number of rows in each square.
+		n_cols (int): The number of columns in each square.
+		explain (bool): A boolean flag to indicate whether to print the steps to solve the puzzle.
+		hint (int or None): An integer value indicating the maximum depth of recursion to print steps.
+		depth (int): The depth of recursion.
 
-    Returns:
-        list or None: A 2D list representing the solved Sudoku puzzle or None if there is no solution.
+	Returns:
+		list or None: A 2D list representing the solved Sudoku puzzle or None if there is no solution.
 
-    """
+	"""
 	#N is the maximum integer considered in this board
 	n = n_rows*n_cols
 	#Find an empty place in the grid
@@ -300,193 +302,374 @@ def recursive_solve(grid, n_rows, n_cols, explain, hint, depth):
 
 def solve(grid, n_rows, n_cols):
 	"""
-    Solves a Sudoku puzzle by calling the recursive_solve function with initial depth of 1.
+	Solves a Sudoku puzzle by calling the recursive_solve function with initial depth of 1.
 
-    Args:
-    - grid (list of lists): The Sudoku puzzle grid as a 2D list of integers. Empty cells are represented by 0.
-    - n_rows (int): The number of rows in each square block.
-    - n_cols (int): The number of columns in each square block.
+	Args:
+	- grid (list of lists): The Sudoku puzzle grid as a 2D list of integers. Empty cells are represented by 0.
+	- n_rows (int): The number of rows in each square block.
+	- n_cols (int): The number of columns in each square block.
 
-    Returns:
-    - A solved Sudoku puzzle grid as a 2D list of integers, or None if no solution was found.
+	Returns:
+	- A solved Sudoku puzzle grid as a 2D list of integers, or None if no solution was found.
 
-    """
+	"""
 		
-    # We set the minimun value of depth as 1
+	# We set the minimun value of depth as 1
 	return recursive_solve(grid, n_rows, n_cols, args.explain, args.hint, 1)
 
 
 
 # The function calls two other functions
 def measure_performance():
-    """
-    Runs performance measurements for the Sudoku solver. 
-    This function compares the solver's performance using different grid sizes and difficulty levels.
+	"""
+	Runs performance measurements for the Sudoku solver. 
+	This function compares the solver's performance using different grid sizes and difficulty levels.
 
-    Args:
-        None
+	Args:
+		None
 
-    Returns:
-        None
-    """
+	Returns:
+		None
+	"""
  
-    print("Running performance measurement")
-    print("====================================\n")
-    compare_different_size()
-    compare_different_difficulty()
+	print("Running performance measurement")
+	print("====================================\n")
+	compare_different_size()
+	compare_different_difficulty()
 
 
 
 def compare_different_size():
-    """
-    Compare the performance of sudoku solvers in terms of time for grids of different sizes.
+	"""
+	Compare the performance of sudoku solvers in terms of time for grids of different sizes.
 
-    This function measures the time taken to solve 100 instances of each grid size (2x2, 3x2, 3x3) using the 
-    'solve' function. The elapsed time for each run is added to a corresponding list ('time_for_2x2', 
-    'time_for_3x2', or 'time_for_3x3'), and the average time for each grid size is calculated. A bar graph is 
-    then plotted with grid size on the x-axis and average time on the y-axis.
+	This function measures the time taken to solve 100 instances of each grid size (2x2, 3x2, 3x3) using the 
+	'solve' function. The elapsed time for each run is added to a corresponding list ('time_for_2x2', 
+	'time_for_3x2', or 'time_for_3x3'), and the average time for each grid size is calculated. A bar graph is 
+	then plotted with grid size on the x-axis and average time on the y-axis.
 
-    Args:
-        None
+	Args:
+		None
 
-    Returns:
-        None
-    """
+	Returns:
+		None
+	"""
  
-    print("\nMeasuring the performance of solvers in terms of time for grids of different size")
-    print("====================================")
-    # For grids of size 2x2, the elapsed time for each run is added to time_for_2x2 list
-    time_for_2x2 = []
-    # For grids of size 3x2, the elapsed time is added to time_for_3x2 list
-    time_for_3x2 = []
-    # For grids of size 3x3, the elapsed time is added to time_for_3x3 list
-    time_for_3x3 = []
+	print("\nMeasuring the performance of solvers in terms of time for grids of different size")
+	print("====================================")
+	# For grids of size 2x2, the elapsed time for each run is added to time_for_2x2 list
+	time_for_2x2 = []
+	# For grids of size 3x2, the elapsed time is added to time_for_3x2 list
+	time_for_3x2 = []
+	# For grids of size 3x3, the elapsed time is added to time_for_3x3 list
+	time_for_3x3 = []
 
-    for (i, (grid, n_rows, n_cols)) in enumerate(grids):
-        if i in [0, 1, 2, 3]:
-            # We run these codes 100 times to get average value
-            for _ in range(100):
-                start_time = time.time()
-                solve(grid, n_rows, n_cols)
-                elapsed_time = time.time() - start_time
-                time_for_2x2.append(elapsed_time)
-        elif i in [4, 5, 6]:
-            for _ in range(100):
-                start_time = time.time()
-                solve(grid, n_rows, n_cols)
-                elapsed_time = time.time() - start_time
-                time_for_3x3.append(elapsed_time)
-        else:
-            for _ in range(100):
-                start_time = time.time()
-                solve(grid, n_rows, n_cols)
-                elapsed_time = time.time() - start_time
-                time_for_3x2.append(elapsed_time)
+	for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+		if i in [0, 1, 2, 3]:
+			# We run these codes 100 times to get average value
+			for _ in range(100):
+				start_time = time.time()
+				solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				time_for_2x2.append(elapsed_time)
+		elif i in [4, 5, 6]:
+			for _ in range(100):
+				start_time = time.time()
+				solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				time_for_3x3.append(elapsed_time)
+		else:
+			for _ in range(100):
+				start_time = time.time()
+				solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				time_for_3x2.append(elapsed_time)
 
-    avg_time_for_2x2 = sum(time_for_2x2) / len(time_for_2x2)
-    avg_time_for_3x2 = sum(time_for_3x2) / len(time_for_3x2)
-    avg_time_for_3x3 = sum(time_for_3x3) / len(time_for_3x3)
+	avg_time_for_2x2 = sum(time_for_2x2) / len(time_for_2x2)
+	avg_time_for_3x2 = sum(time_for_3x2) / len(time_for_3x2)
+	avg_time_for_3x3 = sum(time_for_3x3) / len(time_for_3x3)
 
-    plt.bar(["2x2", "3x2", "3x3"], [avg_time_for_2x2, avg_time_for_3x2, avg_time_for_3x3])
-    plt.xlabel("Grid Size")
-    plt.ylabel("Average Time")
-    plt.title("the performance of solvers in terms of time for grids of different size")
-    plt.show()
+	plt.bar(["2x2", "3x2", "3x3"], [avg_time_for_2x2, avg_time_for_3x2, avg_time_for_3x3])
+	plt.xlabel("Grid Size")
+	plt.ylabel("Average Time")
+	plt.title("the performance of solvers in terms of time for grids of different size")
+	plt.show()
 
 
 def compare_different_difficulty():
-    """
-    Measures the performance of the `solve` function in terms of time for grids of different difficulties.
+	"""
+	Measures the performance of the `solve` function in terms of time for grids of different difficulties.
 
-    Args: 
-        None
-    
-    Returns:
-        None
-    """
+	Args: 
+		None
+	
+	Returns:
+		None
+	"""
  
-    print("\nMeasuring the performance of solvers in terms of time for grids of different difficulties")
-    print("====================================")
-    grid = [[6, 1, 9, 8, 4, 2, 5, 3, 7, ],
-            [7, 4, 5, 3, 6, 9, 1, 8, 2, ],
-            [8, 3, 2, 1, 7, 5, 4, 6, 9, ],
-            [1, 5, 8, 6, 9, 7, 3, 2, 4, ],
-            [9, 6, 4, 2, 3, 1, 8, 7, 5, ],
-            [2, 7, 3, 5, 8, 4, 6, 9, 1, ],
-            [4, 8, 7, 9, 5, 6, 2, 1, 3, ],
-            [3, 9, 1, 4, 2, 8, 7, 5, 6, ],
-            [5, 2, 6, 7, 1, 3, 9, 4, 8, ]]
-    # We crean empty dictionary dic to store the elapsed time for each difficulty level
-    dic = {}
-    # For each difficulty level (increasing from 1 to 60)
-    for i in range(60):
-        # The unfilled location increasing by one after this code is run once
-        num_of_unfilled_locations = i+1
-        # It randomly selects a location in the grid that is not already empty, empties it
-        dic[num_of_unfilled_locations] = []
-        row = random.randint(0, 8)
-        col = random.randint(0, 8)
-        while grid[row][col] == 0:
-            row = random.randint(0, 8)
-            col = random.randint(0, 8)
-        grid[row][col] = 0
-        grid_copy = copy.deepcopy(grid)
-        # We runs the solver 100 times
-        for _ in range(100):
-            start_time = time.time()
-            solve(grid_copy, 3, 3)
-            elapsed_time = time.time() - start_time
-            # It stores the elapsed time in the corresponding list in dic
-            dic[num_of_unfilled_locations].append(elapsed_time)
+	print("\nMeasuring the performance of solvers in terms of time for grids of different difficulties")
+	print("====================================")
+	grid = [[6, 1, 9, 8, 4, 2, 5, 3, 7, ],
+			[7, 4, 5, 3, 6, 9, 1, 8, 2, ],
+			[8, 3, 2, 1, 7, 5, 4, 6, 9, ],
+			[1, 5, 8, 6, 9, 7, 3, 2, 4, ],
+			[9, 6, 4, 2, 3, 1, 8, 7, 5, ],
+			[2, 7, 3, 5, 8, 4, 6, 9, 1, ],
+			[4, 8, 7, 9, 5, 6, 2, 1, 3, ],
+			[3, 9, 1, 4, 2, 8, 7, 5, 6, ],
+			[5, 2, 6, 7, 1, 3, 9, 4, 8, ]]
+	# We crean empty dictionary dic to store the elapsed time for each difficulty level
+	dic = {}
+	# For each difficulty level (increasing from 1 to 60)
+	for i in range(60):
+		# The unfilled location increasing by one after this code is run once
+		num_of_unfilled_locations = i+1
+		# It randomly selects a location in the grid that is not already empty, empties it
+		dic[num_of_unfilled_locations] = []
+		row = random.randint(0, 8)
+		col = random.randint(0, 8)
+		while grid[row][col] == 0:
+			row = random.randint(0, 8)
+			col = random.randint(0, 8)
+		grid[row][col] = 0
+		grid_copy = copy.deepcopy(grid)
+		# We runs the solver 100 times
+		for _ in range(100):
+			start_time = time.time()
+			solve(grid_copy, 3, 3)
+			elapsed_time = time.time() - start_time
+			# It stores the elapsed time in the corresponding list in dic
+			dic[num_of_unfilled_locations].append(elapsed_time)
 
-    num_of_unfilled_locations_list = []
-    # The average elapsed time for each difficulty level is stored in avg_elapsed_time_list
-    avg_elapsed_time_list = []
+	num_of_unfilled_locations_list = []
+	# The average elapsed time for each difficulty level is stored in avg_elapsed_time_list
+	avg_elapsed_time_list = []
 
-    for num_of_unfilled_locations, elapsed_time_list in dic.items():
-        num_of_unfilled_locations_list.append(num_of_unfilled_locations)
-        avg_elapsed_time = sum(elapsed_time_list) / len(elapsed_time_list)
-        avg_elapsed_time_list.append(avg_elapsed_time)
-        
-    # It plots a bar chart showing the average elapsed time for each difficulty level
-    plt.bar(num_of_unfilled_locations_list, avg_elapsed_time_list)
-    plt.xlabel("Number of Unfilled Locations")
-    plt.ylabel("Average Time")
-    plt.title("the performance of solvers in terms of time for grids of different difficulties (specified by number of unfilled locations)")
-    plt.show()
+	for num_of_unfilled_locations, elapsed_time_list in dic.items():
+		num_of_unfilled_locations_list.append(num_of_unfilled_locations)
+		avg_elapsed_time = sum(elapsed_time_list) / len(elapsed_time_list)
+		avg_elapsed_time_list.append(avg_elapsed_time)
+		
+	# It plots a bar chart showing the average elapsed time for each difficulty level
+	plt.bar(num_of_unfilled_locations_list, avg_elapsed_time_list)
+	plt.xlabel("Number of Unfilled Locations")
+	plt.ylabel("Average Time")
+	plt.title("the performance of solvers in terms of time for grids of different difficulties (specified by number of unfilled locations)")
+	plt.show()
 
 
 
 def hint(grid):
-    """
-    Generates a hint for the user by randomly filling in N empty cells in the given Sudoku grid.
+	"""
+	Generates a hint for the user by randomly filling in N empty cells in the given Sudoku grid.
 
-    Args:
-    - grid (list): A 2D list representing the Sudoku grid.
+	Args:
+	- grid (list): A 2D list representing the Sudoku grid.
 
-    Returns:
-    None. Prints the hint grid, which is a copy of the original grid with N cells filled in with valid values.
-    """
+	Returns:
+	None. Prints the hint grid, which is a copy of the original grid with N cells filled in with valid values.
+	"""
  
-    # make a copy of the grid
-    hint_grid = copy.deepcopy(grid)
-    # randomly choose N cells to fill in
-    cells = random.sample([(i, j) for i in range(4) for j in range(4) if grid[i][j] == 0], args.hint)
-    for cell in cells:
-        # fill in the cell with a random valid value
-        row, col = cell
-        values = [i for i in range(1, 5) if check_solution(hint_grid, row, col)]
-        hint_grid[row][col] = random.choice(values)
-    # print the hint grid
-    for row in hint_grid:
-        print(row)
+	# make a copy of the grid
+	hint_grid = copy.deepcopy(grid)
+	# randomly choose N cells to fill in
+	cells = random.sample([(i, j) for i in range(4) for j in range(4) if grid[i][j] == 0], args.hint)
+	for cell in cells:
+		# fill in the cell with a random valid value
+		row, col = cell
+		values = [i for i in range(1, 5) if check_solution(hint_grid, row, col)]
+		hint_grid[row][col] = random.choice(values)
+	# print the hint grid
+	for row in hint_grid:
+		print(row)
+
+#Below all relate to the wavefront algorithm
+
+def wavefront_present_values(grid, row, col): 
+	'''
+	Function returning the values present in each row column and square of
+	a given element of the sudoku grid.
+	   
+	'''
+	box_row = (row // 3) * 3  #(not finished) Uses remainder division to split the 9x9 sudoku grid into a 3x3 grid of 3x3 squares
+	box_col = (col // 3) * 3
+	square = []
+	
+	for i in range(3):
+		for j in range(3):
+			if str(grid[box_row + i][box_col + j]).isnumeric() and grid[box_row + i][box_col + j] > 0:
+				square.append(grid[box_row + i][box_col + j])  #casts the elements in the square as string to be able to test if they are numeric and above zero
+	
+	row_values = [i for i in str(grid[row]) if (i.isnumeric())]
+	row_values = [j for j in row_values if int(j) > 0]
+	row_values = [int(k) for k in row_values] #casts the values in the targetted row as string to be able to test if they are numeric instead of list
+	# then tests if the numbers are greater than zero before casting back to integers
+	
+	column = []
+	for i in range(9):
+		if str(grid[i][col]).isnumeric() and grid[i][col] > 0: #cast to string for same reason as for square and row
+			column.append(grid[i][col])
+			
+			
+	wavefront_present_values =[]
+	
+	for i in row_values:
+		wavefront_present_values.append(i)
+		
+	for j in column:
+		if j not in wavefront_present_values:
+			wavefront_present_values.append(j)
+			
+	for k in square:
+		if k not in wavefront_present_values:
+			wavefront_present_values.append(k) #adds all value in row, col and square to present values if they are not already there
+	
+	return wavefront_present_values
+
+
+def wavefront_amend_lists(grid, row, col, value):
+	'''
+	Function to amend the lists of available numbers for unfilled elements 
+	in the sudoku grid after an element has been filled
+	Returns the amended grid
+	Uses isinstance() to test for the presence of nested lists, indicating an unfilled element
+	to be amended
+	'''
+	for amend_row in grid[row]:
+		list_test = isinstance(amend_row, list)
+		if list_test == True and (value in amend_row):
+			amend_row.remove(value)
+			
+	for amend_col in range(9):
+		list_test2 = isinstance(grid[amend_col][col], list)
+		if list_test2 == True and (value in grid[amend_col][col]):
+			grid[amend_col][col].remove(value)
+			
+	box_row = (row // 3) * 3 #repeat of technique used in wavefront_present_values function to attain the values in a square
+	box_col = (col // 3) * 3
+	square = []
+	
+	for i in range(3):
+		for j in range(3):
+			if str(grid[box_row + i][box_col + j]).isnumeric() and grid[box_row + i][box_col + j] > 0:
+				square.append(grid[box_row + i][box_col + j])
+				
+	for amend_square in square:
+		list_test3 = isinstance(amend_square, list)
+		if list_test3 == True and (value in amend_square):
+			amend_square.remove(value)
+			
+	return grid        
+
+
+def wavefront_fill_cells(grid):
+	'''
+	Function used to fill all elements that display '0' 
+	of the initially entered sudoku list with the numbers that are able to be entered into that element
+	Uses the wavefront_present_values() function to do this
+	Returns the amended sudoku grid
+	'''
+	values = [1,2,3,4,5,6,7,8,9] #initial list of all possible values
+	empties = [] #contains the lists of values that are able to be entered into each empty element
+	counter = 0
+	
+	for row in range(9):
+		for col in range(9):
+			if grid[row][col] == 0:
+				not_allowed = wavefront_present_values(grid, row, col)
+				for i in not_allowed:
+					if i in values:
+						values.remove(i) #removes values from the list of all possible values if they are already present in the row, col or square
+				empties.append(values)
+				values = [1,2,3,4,5,6,7,8,9]
+				
+	for row in range(9):
+		for col in range(9):
+			if grid[row][col] == 0:
+				grid[row][col] = empties[counter]
+				counter += 1
+	
+	return grid
+
+def wavefront_smallest_empty(grid):
+	smallest = [1,2,3,4,5,6,7,8,9]
+	
+	for row in range(9):
+		for col in range(9):
+			test = isinstance(grid[row][col], list)
+			if test == True and len(grid[row][col]) == 0:
+				return grid              
+			elif test == True and len(grid[row][col]) < len(smallest):
+				smallest = grid[row][col]
+				smallest_row, smallest_col = row, col
+
+	grid[smallest_row][smallest_col] = random.choice(smallest)
+	wavefront_amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col])
+	
+	return grid
+	
+
+def wavefront_is_solved(grid):
+	for row in grid:
+		test = any(isinstance(element, list) for element in row)
+		if test == True:
+			return False
+	return True
+
+def wavefront_is_unsolved(grid):
+	for row in range(9):
+		for col in range(9):
+			test = isinstance(grid[row][col], list)
+			if test == True and len(grid[row][col]) == 0:
+				return True
+			
+	return False
+			
+
+def wavefront_solve(grid):
+	'''
+	Main function to solve the initally sudoku grid that is entered 
+	''' 
+	wavefront_fill_cells(grid) #fills all cells containing 0 with a list of numbers that are possible to be placed 
+	attempts = 0
+	
+	while attempts < 200:
+		attempts += 1
+		
+		for i in range(9):
+			for row in range(9):
+				for col in range(9):
+					list_test = isinstance(grid[row][col], list)
+					if list_test == True and len(grid[row][col]) == 1:
+						grid[row][col] = (grid[row][col])[0]
+						wavefront_amend_lists(grid, row, col, grid[row][col])
+		
+		
+		if wavefront_is_solved(grid) == False:
+			wavefront_smallest_empty(grid)
+		elif wavefront_is_solved(grid) == True:
+			return grid  
+			
+	print("Failed Attempt")
+	print(grid)
+	
+	
+	
+			
+	return None         
+				
 
 
 def main():
 
 	# initialize points counter
 	points = 0
-	
+	algorithm = input("Which algorithm do you want to use? Wavefront: W, Normal: N \n").upper()
+	if algorithm == "W":
+		wavefront = True
+	else:
+		wavefront = False
+
 	# if --hint flag is used, print a hint for grid5
 	if args.hint:
 		hint(grid5)
@@ -522,26 +705,48 @@ def main():
 
 	# if no flags are used, run the test script on all grids
 	else:
+		if wavefront == True:
+				print(wavefront_solve([
+					[0, 0, 0, 6, 0, 0, 0, 0, 0],
+					[0, 0, 0, 0, 0, 0, 5, 0, 1],
+					[3, 6, 9, 0, 8, 0, 4, 0, 0],
+					[0, 0, 0, 0, 0, 6, 8, 0, 0],
+					[0, 0, 0, 1, 3, 0, 0, 0, 9],
+					[4, 0, 5, 0, 0, 9, 0, 0, 0],
+					[0, 0, 0, 0, 0, 0, 3, 0, 0],
+					[0, 0, 6, 0, 0, 7, 0, 0, 0],
+					[1, 0, 0, 3, 4, 0, 0, 0, 0]]))
 
-		print("Running test script for coursework 1")
-		print("====================================")
+				print(wavefront_solve([
+						[9, 0, 6, 0, 0, 1, 0, 4, 0],
+						[7, 0, 1, 2, 9, 0, 0, 6, 0],
+						[4, 0, 2, 8, 0, 6, 3, 0, 0],
+						[0, 0, 0, 0, 2, 0, 9, 8, 0], 
+						[6, 0, 0, 0, 0, 0, 0, 0, 2],
+						[0, 9, 4, 0, 8, 0, 0, 0, 0],
+						[0, 0, 3, 7, 0, 8, 4, 0, 9],
+						[0, 4, 0, 0, 1, 3, 7, 0, 6],
+						[0, 6, 0, 9, 0, 0, 1, 0, 8]]))
+		if wavefront == False:
+			print("Running test script for coursework 1")
+			print("====================================")
 	
-		for (i, (grid, n_rows, n_cols)) in enumerate(grids):
-			print("Solving grid: %d" % (i+1))
-			start_time = time.time()
-			solution = solve(grid, n_rows, n_cols)
-			elapsed_time = time.time() - start_time
-			print("Solved in: %f seconds" % elapsed_time)
-			print(solution)
-			# check if the solution is correct and update points counter
-			if check_solution(solution, n_rows, n_cols):
-				print("grid %d correct" % (i+1))
-				points = points + 10
-			else:
-				print("grid %d incorrect" % (i+1))
+			for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+				print("Solving grid: %d" % (i+1))
+				start_time = time.time()
+				solution = solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				print("Solved in: %f seconds" % elapsed_time)
+				print(solution)
+				# check if the solution is correct and update points counter
+				if check_solution(solution, n_rows, n_cols):
+					print("grid %d correct" % (i+1))
+					points = points + 10
+				else:
+					print("grid %d incorrect" % (i+1))
 
-		print("====================================")
-		print("Test script complete, Total points: %d" % points)
+			print("====================================")
+			print("Test script complete, Total points: %d" % points)
 
 
 
