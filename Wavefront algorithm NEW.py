@@ -106,6 +106,39 @@ def fill_cells(grid):
     
     return grid
 
+def smallest_empty(grid):
+    smallest = [1,2,3,4,5,6,7,8,9]
+    
+    for row in range(9):
+        for col in range(9):
+            test = isinstance(grid[row][col], list)
+            if test == True and len(grid[row][col]) < len(smallest):
+                smallest = grid[row][col]
+                smallest_row, smallest_col = row, col
+                
+    print(smallest_row, smallest_col)
+    grid[smallest_row][smallest_col] = random.choice(smallest)
+    amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col])
+    
+    return grid
+    
+
+def is_solved(grid):
+    for row in grid:
+        test = any(isinstance(element, list) for element in row)
+        if test == True:
+            return False
+    return True
+
+def is_unsolved(grid):
+    for row in range(9):
+        for col in range(9):
+            test = isinstance(grid[row][col], list)
+            if test == True and len(grid[row][col]) == 0:
+                return True
+            
+    return False
+            
 
 def solve(grid):
     '''
@@ -113,37 +146,32 @@ def solve(grid):
     '''
     original_grid = grid 
     fill_cells(grid)
+    attempts = 0
     
-    for i in range(9):
-        for row in range(9):
-            for col in range(9):
-                list_test = isinstance(grid[row][col], list)
-                if list_test == True and len(grid[row][col]) == 1:
-                    grid[row][col] = (grid[row][col])[0]
-                    amend_lists(grid, row, col, grid[row][col])
+    while attempts < 100:
+        attempts += 1
         
+        for i in range(9):
+            for row in range(9):
+                for col in range(9):
+                    list_test = isinstance(grid[row][col], list)
+                    if list_test == True and len(grid[row][col]) == 1:
+                        grid[row][col] = (grid[row][col])[0]
+                        amend_lists(grid, row, col, grid[row][col])
+        
+        
+        if is_solved(grid) == False:
+            smallest_empty(grid)
+        elif is_solved(grid) == True:
+            return grid  
+            
+    print("Failed Attempt")
+    print(grid)
     
-    for i in range(9):
-        for row in range(9):
-            list_size = 1
-            for col in range(9):                
-                test = isinstance(grid[row][col], list)
-                if test == True and len(grid[row][col]) == list_size:
-                    grid[row][col] = random.choice((grid[row][col]))
-                    amend_lists
-                elif test == True and len(grid[row][col]) == 0:
-                    solve(original_grid)
-            list_size += 1
-         
-        any_lists = False
-        for row in range(9):
-            for col in range(9):
-                final_test = isinstance(grid[row][col], list)
-                if final_test == True:
-                    any_lists = True
-        
-        
-    return grid
+    
+    
+            
+    return None
             
                 
     
