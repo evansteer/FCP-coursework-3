@@ -112,11 +112,12 @@ def smallest_empty(grid):
     for row in range(9):
         for col in range(9):
             test = isinstance(grid[row][col], list)
-            if test == True and len(grid[row][col]) < len(smallest):
+            if test == True and len(grid[row][col]) == 0:
+                return grid              
+            elif test == True and len(grid[row][col]) < len(smallest):
                 smallest = grid[row][col]
                 smallest_row, smallest_col = row, col
-                
-    print(smallest_row, smallest_col)
+
     grid[smallest_row][smallest_col] = random.choice(smallest)
     amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col])
     
@@ -143,12 +144,11 @@ def is_unsolved(grid):
 def solve(grid):
     '''
     Main function to solve the initally sudoku grid that is entered 
-    '''
-    original_grid = grid 
-    fill_cells(grid)
+    ''' 
+    fill_cells(grid) #fills all cells containing 0 with a list of numbers that are possible to be placed 
     attempts = 0
     
-    while attempts < 100:
+    while attempts < 200:
         attempts += 1
         
         for i in range(9):
@@ -171,8 +171,7 @@ def solve(grid):
     
     
             
-    return None
-            
+    return None         
                 
     
 
