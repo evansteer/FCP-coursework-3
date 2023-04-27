@@ -38,50 +38,50 @@ grid2 = [
 
 grid3 = [
 		[0, 3, 0, 4, 0, 0],
-        [0, 0, 5, 6, 0, 3],
-        [0, 0, 0, 1, 0, 0],
-        [0, 1, 0, 3, 0, 5],
-        [0, 6, 4, 0, 3, 1],
-        [0, 0, 1, 0, 4, 6]]
+		[0, 0, 5, 6, 0, 3],
+		[0, 0, 0, 1, 0, 0],
+		[0, 1, 0, 3, 0, 5],
+		[0, 6, 4, 0, 3, 1],
+		[0, 0, 1, 0, 4, 6]]
 
 
 #Meadium grids 4-5
 grid4 = [
 	[0, 0, 0, 6, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 5, 0, 1],
-    [3, 6, 9, 0, 8, 0, 4, 0, 0],
-    [0, 0, 0, 0, 0, 6, 8, 0, 0],
-    [0, 0, 0, 1, 3, 0, 0, 0, 9],
-    [4, 0, 5, 0, 0, 9, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 3, 0, 0],
-    [0, 0, 6, 0, 0, 7, 0, 0, 0],
-    [1, 0, 0, 3, 4, 0, 0, 0, 0]]
+	[0, 0, 0, 0, 0, 0, 5, 0, 1],
+	[3, 6, 9, 0, 8, 0, 4, 0, 0],
+	[0, 0, 0, 0, 0, 6, 8, 0, 0],
+	[0, 0, 0, 1, 3, 0, 0, 0, 9],
+	[4, 0, 5, 0, 0, 9, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 3, 0, 0],
+	[0, 0, 6, 0, 0, 7, 0, 0, 0],
+	[1, 0, 0, 3, 4, 0, 0, 0, 0]]
 
 
 
 grid5 = [
 		[8, 0, 9, 0, 2, 0, 3, 0, 0],
-        [0, 3, 7, 0, 6, 0, 5, 0, 0],
-        [0, 0, 0, 4, 0, 9, 7, 0, 0],
-        [0, 0, 2, 9, 0, 1, 0, 6, 0],
-        [1, 0, 0, 3, 0, 6, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 1, 0, 3],
-        [7, 0, 0, 0, 0, 0, 0, 0, 8],
-        [5, 0, 0, 0, 0, 0, 0, 1, 4],
-        [0, 0, 0, 2, 8, 4, 6, 0, 5]
+		[0, 3, 7, 0, 6, 0, 5, 0, 0],
+		[0, 0, 0, 4, 0, 9, 7, 0, 0],
+		[0, 0, 2, 9, 0, 1, 0, 6, 0],
+		[1, 0, 0, 3, 0, 6, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 1, 0, 3],
+		[7, 0, 0, 0, 0, 0, 0, 0, 8],
+		[5, 0, 0, 0, 0, 0, 0, 1, 4],
+		[0, 0, 0, 2, 8, 4, 6, 0, 5]
 		]
 
 #Hard grid 6
 grid6 = [
 		[0, 2, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 6, 0, 4, 0, 0, 0, 0],
-        [5, 8, 0, 0, 9, 0, 0, 0, 3],
-        [0, 0, 0, 0, 0, 3, 0, 0, 4],
-        [4, 1, 0, 0, 8, 0, 6, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 9, 5],
-        [2, 0, 0, 0, 1, 0, 0, 8, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 3, 1, 0, 0, 8, 0, 5, 7]]
+		[0, 0, 6, 0, 4, 0, 0, 0, 0],
+		[5, 8, 0, 0, 9, 0, 0, 0, 3],
+		[0, 0, 0, 0, 0, 3, 0, 0, 4],
+		[4, 1, 0, 0, 8, 0, 6, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 9, 5],
+		[2, 0, 0, 0, 1, 0, 0, 8, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 3, 1, 0, 0, 8, 0, 5, 7]]
 
 
 
@@ -299,8 +299,8 @@ def solve(grid, n_rows, n_cols):
 	time.sleep(0)	
 	# We set the minimun value of depth as 1
 	return recursive_solve(grid, n_rows, n_cols, args.explain, args.hint, 1)
-    
-        
+	
+		
 
 
 # The function calls two other functions
@@ -324,60 +324,60 @@ def measure_performance():
 
 
 def compare_different_difficulty():
-    """
-    Compare the performance of sudoku solvers in terms of time for grids of different levels of difficulty.
+	"""
+	Compare the performance of sudoku solvers in terms of time for grids of different levels of difficulty.
 
-    This function measures the time taken to solve 100 instances of each grid difficulty (easy, medium, hard) using the 
-    'solve' function. The elapsed time for each run is added to a corresponding list ('time_for_easygrid', 
-    'time_for_mediumgrid2', or 'time_for_hardgrid'), and the average time for each grid size is calculated. A bar graph is 
-    then plotted with grid size on the x-axis and average time on the y-axis.
+	This function measures the time taken to solve 100 instances of each grid difficulty (easy, medium, hard) using the 
+	'solve' function. The elapsed time for each run is added to a corresponding list ('time_for_easygrid', 
+	'time_for_mediumgrid2', or 'time_for_hardgrid'), and the average time for each grid size is calculated. A bar graph is 
+	then plotted with grid size on the x-axis and average time on the y-axis.
 
-    Args:
-        None
+	Args:
+		None
 
-    Returns:
-        None
-    """
+	Returns:
+		None
+	"""
  
-    print("\nMeasuring the performance of solvers in terms of time for grids of different difficulty")
-    print("====================================")
-    # For easy grids, the elapsed time for each run is added to time_for_easygrid list
-    time_for_easygrid = []
-    # For medium grids, the elapsed time is added to time_for_mediumgrid list
-    time_for_mediumgrid = []
-    # For hard grids, the elapsed time is added to time_for_hardgrid list
-    time_for_hardgrid = []
+	print("\nMeasuring the performance of solvers in terms of time for grids of different difficulty")
+	print("====================================")
+	# For easy grids, the elapsed time for each run is added to time_for_easygrid list
+	time_for_easygrid = []
+	# For medium grids, the elapsed time is added to time_for_mediumgrid list
+	time_for_mediumgrid = []
+	# For hard grids, the elapsed time is added to time_for_hardgrid list
+	time_for_hardgrid = []
 
-    for (i, (grid, n_rows, n_cols)) in enumerate(grids):
-        if i in [0, 1, 2]:
-            # We run these codes 100 times to get average value
-            for _ in range(100):
-                start_time = time.time()
-                solve(grid, n_rows, n_cols)
-                elapsed_time = time.time() - start_time
-                time_for_easygrid.append(elapsed_time)
-        elif i in [3,4]:
-            for _ in range(100):
-                start_time = time.time()
-                solve(grid, n_rows, n_cols)
-                elapsed_time = time.time() - start_time
-                time_for_mediumgrid.append(elapsed_time)
-        else:
-            for _ in range(100):
-                start_time = time.time()
-                solve(grid, n_rows, n_cols)
-                elapsed_time = time.time() - start_time
-                time_for_hardgrid.append(elapsed_time)
+	for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+		if i in [0, 1, 2]:
+			# We run these codes 100 times to get average value
+			for _ in range(100):
+				start_time = time.time()
+				solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				time_for_easygrid.append(elapsed_time)
+		elif i in [3,4]:
+			for _ in range(100):
+				start_time = time.time()
+				solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				time_for_mediumgrid.append(elapsed_time)
+		else:
+			for _ in range(100):
+				start_time = time.time()
+				solve(grid, n_rows, n_cols)
+				elapsed_time = time.time() - start_time
+				time_for_hardgrid.append(elapsed_time)
 
-    avg_time_for_easygrid = sum(time_for_easygrid) / len(time_for_easygrid)
-    avg_time_for_mediumgrid = sum(time_for_mediumgrid) / len(time_for_mediumgrid)
-    avg_time_for_hardgrid = sum(time_for_hardgrid) / len(time_for_hardgrid)
+	avg_time_for_easygrid = sum(time_for_easygrid) / len(time_for_easygrid)
+	avg_time_for_mediumgrid = sum(time_for_mediumgrid) / len(time_for_mediumgrid)
+	avg_time_for_hardgrid = sum(time_for_hardgrid) / len(time_for_hardgrid)
 
-    plt.bar(["Easy grids", "Meadium grids", "Hard grid"], [avg_time_for_easygrid, avg_time_for_mediumgrid, avg_time_for_hardgrid])
-    plt.xlabel("Grid Difficulty")
-    plt.ylabel("Average Time")
-    plt.title("the performance of solvers in terms of time for grids of different level of difficulty")
-    plt.show()
+	plt.bar(["Easy grids", "Meadium grids", "Hard grid"], [avg_time_for_easygrid, avg_time_for_mediumgrid, avg_time_for_hardgrid])
+	plt.xlabel("Grid Difficulty")
+	plt.ylabel("Average Time")
+	plt.title("the performance of solvers in terms of time for grids of different level of difficulty")
+	plt.show()
 
 
 #Below all relate to the wavefront algorithm
@@ -558,18 +558,18 @@ def wavefront_solve(grid):
 
 for (i, (grid, n_rows, n_cols)) in enumerate(grids):				
 # measure the solving time for solver 1
-    start_time1 = time.time()
-    result1 = solve(grid, n_rows, n_cols)
-    end_time1 = time.time()
-    solver1_time = end_time1 - start_time1
-    print("Solver 1 solving time:", solver1_time)
+	start_time1 = time.time()
+	result1 = solve(grid, n_rows, n_cols)
+	end_time1 = time.time()
+	solver1_time = end_time1 - start_time1
+	print("Solver 1 solving time:", solver1_time)
 
 # measure the solving time for solver 2
-    start_time2 = time.time()
-    result2 = wavefront_solve(grid1)
-    end_time2 = time.time()
-    solver2_time = end_time2 - start_time2
-    print("Solver 2 solving time:", solver2_time)
+	start_time2 = time.time()
+	result2 = wavefront_solve(grid1)
+	end_time2 = time.time()
+	solver2_time = end_time2 - start_time2
+	print("Solver 2 solving time:", solver2_time)
 
 def main():
 
@@ -616,7 +616,6 @@ def main():
 	else:
 		if wavefront == True:
 				print(wavefront_solve(grid1))
-               
 				print(wavefront_solve(grid2))
 		if wavefront == False:
 			print("Running test script for coursework 1")
