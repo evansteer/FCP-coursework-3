@@ -382,18 +382,29 @@ def compare_different_difficulty():
 
 #Below all relate to the wavefront algorithm
 
-def wavefront_present_values(grid, row, col): 
+def wavefront_present_values(grid, row, col, rows, cols): 
 	'''
 	Function returning the values present in each row column and square of
 	a given element of the sudoku grid.
 	   
 	'''
-	box_row = (row // 3) * 3  #(not finished) Uses remainder division to split the 9x9 sudoku grid into a 3x3 grid of 3x3 squares
-	box_col = (col // 3) * 3
+	#Use of if statements to decide how to allocate the dimensions of subsquares in the sudoku grid based on the dimensions of the sudoku grid
+	if rows < 9:
+		r_divisor, r_multiplier = 2, 2
+	else:
+		r_divisor, r_multiplier = 3, 3
+        
+	if cols < 6:
+		c_divisor, c_multiplier = 2, 2
+	else:
+		c_divisor, c_multiplier = 3, 3
+        
+	box_row = (row // r_divisor) * r_multiplier #Uses remainder division and multiplication to attain the list indicies squares and thus detect the values in a square
+	box_col = (col // c_divisor) * c_multiplier
 	square = []
 	
-	for i in range(3):
-		for j in range(3):
+	for i in range(r_divisor):
+		for j in range(c_divisor):
 			if str(grid[box_row + i][box_col + j]).isnumeric() and grid[box_row + i][box_col + j] > 0:
 				square.append(grid[box_row + i][box_col + j])  #casts the elements in the square as string to be able to test if they are numeric and above zero
 	
@@ -424,7 +435,7 @@ def wavefront_present_values(grid, row, col):
 	return wavefront_present_values
 
 
-def wavefront_amend_lists(grid, row, col, value):
+def wavefront_amend_lists(grid, row, col, value, rows, cols):
 	'''
 	Function to amend the lists of available numbers for unfilled elements 
 	in the sudoku grid after an element has been filled
@@ -437,17 +448,27 @@ def wavefront_amend_lists(grid, row, col, value):
 		if list_test == True and (value in amend_row):
 			amend_row.remove(value)
 			
-	for amend_col in range(9):
+	for amend_col in range(rows):
 		list_test2 = isinstance(grid[amend_col][col], list)
 		if list_test2 == True and (value in grid[amend_col][col]):
 			grid[amend_col][col].remove(value)
 			
-	box_row = (row // 3) * 3 #repeat of technique used in wavefront_present_values function to attain the values in a square
-	box_col = (col // 3) * 3
+	if rows < 9:
+		r_divisor, r_multiplier = 2, 2
+	else:
+		r_divisor, r_multiplier = 3, 3
+        
+	if cols < 6:
+		c_divisor, c_multiplier = 2, 2
+	else:
+		c_divisor, c_multiplier = 3, 3
+        
+	box_row = (row // r_divisor) * r_multiplier #repeat of technique used in present_values function to attain the values in a square
+	box_col = (col // c_divisor) * c_multiplier
 	square = []
 	
-	for i in range(3):
-		for j in range(3):
+	for i in range(r_divisor):
+		for j in range(c_divisor):
 			if str(grid[box_row + i][box_col + j]).isnumeric() and grid[box_row + i][box_col + j] > 0:
 				square.append(grid[box_row + i][box_col + j])
 				
@@ -459,40 +480,50 @@ def wavefront_amend_lists(grid, row, col, value):
 	return grid        
 
 
-def wavefront_fill_cells(grid):
+def wavefront_fill_cells(grid, rows, cols):
 	'''
 	Function used to fill all elements that display '0' 
 	of the initially entered sudoku list with the numbers that are able to be entered into that element
 	Uses the wavefront_present_values() function to do this
 	Returns the amended sudoku grid
 	'''
-	values = [1,2,3,4,5,6,7,8,9] #initial list of all possible values
+	if rows == 9:
+		values = [1,2,3,4,5,6,7,8,9]#initial list of all possible values, depending on dimensions of the sudoku grid
+	elif rows == 6:
+		values = [1,2,3,4,5,6]
+	elif rows == 4:
+		values = [1,2,3,4]
 	empties = [] #contains the lists of values that are able to be entered into each empty element
 	counter = 0
 	
-	for row in range(9):
-		for col in range(9):
+	for row in range(rows):
+		for col in range(cols):
 			if grid[row][col] == 0:
-				not_allowed = wavefront_present_values(grid, row, col)
+				not_allowed = wavefront_present_values(grid, row, col, rows, cols)
 				for i in not_allowed:
 					if i in values:
 						values.remove(i) #removes values from the list of all possible values if they are already present in the row, col or square
 				empties.append(values)
-				values = [1,2,3,4,5,6,7,8,9]
+				if rows == 9:
+					values = [1,2,3,4,5,6,7,8,9]
+				elif rows == 6:
+					values = [1,2,3,4,5,6]
+				elif rows == 4:
+					values = [1,2,3,4]
 				
-	for row in range(9):
-		for col in range(9):
+	for row in range(rows):
+		for col in range(cols):
 			if grid[row][col] == 0:
 				grid[row][col] = empties[counter]
 				counter += 1
 	
 	return grid
 
-def wavefront_smallest_empty(grid):
+def wavefront_smallest_empty(grid, rows, cols):
 	smallest = [1,2,3,4,5,6,7,8,9]
 	
-	for row in range(9):
-		for col in range(9):
+	for row in range(rows):
+		for col in range(cols):
 			test = isinstance(grid[row][col], list)
 			if test == True and len(grid[row][col]) == 0:
 				return grid              
@@ -501,7 +532,7 @@ def wavefront_smallest_empty(grid):
 				smallest_row, smallest_col = row, col
 
 	grid[smallest_row][smallest_col] = random.choice(smallest)
-	wavefront_amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col])
+	wavefront_amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col], rows, cols)
 	
 	return grid
 	
@@ -512,38 +543,31 @@ def wavefront_is_solved(grid):
 		if test == True:
 			return False
 	return True
-
-def wavefront_is_unsolved(grid):
-	for row in range(9):
-		for col in range(9):
-			test = isinstance(grid[row][col], list)
-			if test == True and len(grid[row][col]) == 0:
-				return True
-			
-	return False
 			
 
 def wavefront_solve(grid):
 	'''
 	Main function to solve the initally sudoku grid that is entered 
 	''' 
-	wavefront_fill_cells(grid) #fills all cells containing 0 with a list of numbers that are possible to be placed 
+	rows = len(grid) #finds the number of rows and collumns in the grid
+	cols = len(grid[0])
+	wavefront_fill_cells(grid, rows, cols) #fills all cells containing 0 with a list of numbers that are possible to be placed 
 	attempts = 0
 	
 	while attempts < 200:
 		attempts += 1
 		
 		for i in range(9):
-			for row in range(9):
-				for col in range(9):
+			for row in range(rows):
+				for col in range(cols):
 					list_test = isinstance(grid[row][col], list)
 					if list_test == True and len(grid[row][col]) == 1:
 						grid[row][col] = (grid[row][col])[0]
-						wavefront_amend_lists(grid, row, col, grid[row][col])
+						wavefront_amend_lists(grid, row, col, grid[row][col], rows, cols)
 		
 		
 		if wavefront_is_solved(grid) == False:
-			wavefront_smallest_empty(grid)
+			wavefront_smallest_empty(grid, rows, cols)
 		elif wavefront_is_solved(grid) == True:
 			return grid  
 			
