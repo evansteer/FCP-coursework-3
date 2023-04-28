@@ -35,3 +35,10 @@ the times for each run on both normal and wavefront and then the mean time for e
 
 In the case of using wavefront normally it uses a self generated set of grids, 
 if using it with --profile it will use the same grids as shown at the top of the program
+
+It is possible when using --profile that timings will show "0", this is assumed to be an issue with
+floating point numbers and python just defaulting to 0, but not 100% sure on that.
+
+--profile can be used in 2 ways, firstly if you run it and choose "N", then it will assess the performance
+of the normal algorithm over a range of difficulties and grid sizes. If it used and you choose "W", then
+it will run both algorithms on the basic set of grids and time their solving and output the results.
