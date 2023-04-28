@@ -29,3 +29,9 @@ If this happens do 'python.exe -m pip install matplotlib' and that will fix your
 
 In the folder you will find INPUT.txt which contains a (very hard) 3x3 example grid for --file.
 The results of --file are in OUTPUT, which is overwritten each time the program is run.
+
+The wavefront algorithm is only designed to work alone or with --profile, in which case it will output
+the times for each run on both normal and wavefront and then the mean time for each solver
+
+In the case of using wavefront normally it uses a self generated set of grids, 
+if using it with --profile it will use the same grids as shown at the top of the program

@@ -1,4 +1,4 @@
-import random, copy, time, argparse, random, copy
+import random, copy, time, argparse, random, copy, statistics
 import matplotlib.pyplot as plt
 
 #Args parser for task 2
@@ -13,97 +13,80 @@ args = parser.parse_args()
 
 wavefront = False
 
-#Grids 1-4 are 2x2
+#Easy grids 1-3
 grid1 = [
-		[1, 0, 4, 2],
-		[4, 2, 1, 3],
-		[2, 1, 3, 4],
-		[3, 4, 2, 1]]
+	[9, 0, 6, 0, 0, 1, 0, 4, 0],
+	[7, 0, 1, 2, 9, 0, 0, 6, 0],
+	[4, 0, 2, 8, 0, 6, 3, 0, 0],
+	[0, 0, 0, 0, 2, 0, 9, 8, 0],
+	[6, 0, 0, 0, 0, 0, 0, 0, 2],
+	[0, 9, 4, 0, 8, 0, 0, 0, 0],
+	[0, 0, 3, 7, 0, 8, 4, 0, 9],
+	[0, 4, 0, 0, 1, 3, 7, 0, 6],
+	[0, 6, 0, 9, 0, 0, 1, 0, 8]]
 
 grid2 = [
-		[1, 0, 4, 2],
-		[4, 2, 1, 3],
-		[2, 1, 0, 4],
-		[3, 4, 2, 1]]
+	[0, 0, 0, 2, 6, 0, 7, 0, 1],
+	[6, 8, 0, 0, 7, 0, 0, 9, 0],
+	[1, 9, 0, 0, 0, 4, 5, 0, 0],
+	[8, 2, 0, 1, 0, 0, 0, 4, 0],
+	[0, 0, 4, 6, 0, 2, 9, 0, 0],
+	[0, 5, 0, 0, 0, 3, 0, 2, 8],
+	[0, 0, 9, 3, 0, 0, 0, 7, 4],
+	[0, 4, 0, 0, 5, 0, 0, 3, 6],
+	[7, 0, 3, 0, 1, 8, 0, 0, 0]]
 
 grid3 = [
-		[1, 0, 4, 2],
-		[4, 2, 1, 0],
-		[2, 1, 0, 4],
-		[0, 4, 2, 1]]
+		[0, 3, 0, 4, 0, 0],
+		[0, 0, 5, 6, 0, 3],
+		[0, 0, 0, 1, 0, 0],
+		[0, 1, 0, 3, 0, 5],
+		[0, 6, 4, 0, 3, 1],
+		[0, 0, 1, 0, 4, 6]]
 
+
+#Meadium grids 4-5
 grid4 = [
-		[1, 0, 4, 2],
-		[0, 2, 1, 0],
-		[2, 1, 0, 4],
-		[0, 4, 2, 1]]
+	[0, 0, 0, 6, 0, 0, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 5, 0, 1],
+	[3, 6, 9, 0, 8, 0, 4, 0, 0],
+	[0, 0, 0, 0, 0, 6, 8, 0, 0],
+	[0, 0, 0, 1, 3, 0, 0, 0, 9],
+	[4, 0, 5, 0, 0, 9, 0, 0, 0],
+	[0, 0, 0, 0, 0, 0, 3, 0, 0],
+	[0, 0, 6, 0, 0, 7, 0, 0, 0],
+	[1, 0, 0, 3, 4, 0, 0, 0, 0]]
 
-#Grids 4-7 are 3x3
+
+
 grid5 = [
-	[0, 0, 0, 0, 3, 0, 7, 0, 0],
-	[0, 5, 0, 0, 0, 0, 0, 9, 0],
-	[0, 0, 0, 0, 9, 0, 0, 0, 1],
-	[1, 0, 0, 0, 7, 0, 4, 0, 0],
-	[8, 0, 0, 0, 0, 0, 0, 0, 5],
-	[0, 0, 7, 0, 6, 0, 0, 0, 0],
-	[0, 0, 3, 0, 0, 0, 0, 0, 0],
-	[0, 4, 0, 0, 0, 0, 0, 0, 0],
-	[0, 0, 0, 1, 0, 0, 0, 8, 0]]
-
-
-
-grid6 = [
-		[0, 0, 0, 0, 4, 2, 0, 0, 0],
-		[7, 0, 5, 0, 6, 9, 0, 8, 2],
-		[8, 3, 0, 0, 0, 0, 0, 0, 9],
-		[1, 0, 0, 0, 9, 7, 0, 0, 4],
-		[9, 6, 0, 0, 0, 0, 8, 0, 0],
-		[0, 0, 3, 0, 8, 4, 6, 0, 1],
-		[4, 0, 0, 9, 0, 6, 2, 0, 3],
-		[0, 0, 1, 0, 2, 8, 0, 5, 0],
-		[5, 0, 6, 0, 1, 0, 0, 4, 8]
+		[8, 0, 9, 0, 2, 0, 3, 0, 0],
+		[0, 3, 7, 0, 6, 0, 5, 0, 0],
+		[0, 0, 0, 4, 0, 9, 7, 0, 0],
+		[0, 0, 2, 9, 0, 1, 0, 6, 0],
+		[1, 0, 0, 3, 0, 6, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 1, 0, 3],
+		[7, 0, 0, 0, 0, 0, 0, 0, 8],
+		[5, 0, 0, 0, 0, 0, 0, 1, 4],
+		[0, 0, 0, 2, 8, 4, 6, 0, 5]
 		]
 
-grid7 = [
-		[6, 1, 9, 8, 4, 0, 0, 3, 7,],
-		[7, 0, 5, 3, 6, 9, 1, 8, 2,],
-		[8, 3, 0, 1, 7, 5, 4, 6, 9,],
-		[1, 5, 8, 6, 9, 7, 3, 0, 4,],
-		[9, 6, 4, 2, 3, 1, 8, 7, 5,],
-		[2, 7, 0, 5, 8, 4, 6, 9, 1,],
-		[4, 8, 7, 9, 5, 6, 2, 1, 3,],
-		[3, 9, 1, 4, 2, 8, 0, 5, 6,],
-		[5, 2, 6, 0, 1, 3, 9, 4, 8,]]
-
-#grids 8-10 are 2x3
-grid8 = [
-		[0, 0, 6, 0, 0, 3],
-		[5, 0, 0, 0, 0, 0],
-		[0, 1, 3, 4, 0, 0],
-		[0, 0, 0, 0, 0, 6],
-		[0, 0, 1, 0, 0, 0],
-		[0, 5, 0, 0, 6, 4]]
-
-grid9 =[
-		[0, 0, 6, 0, 0, 3],
-		[5, 0, 0, 0, 0, 0],
-		[0, 1, 3, 4, 0, 0],
-		[0, 0, 0, 0, 0, 6],
-		[0, 0, 1, 0, 0, 0],
-		[0, 5, 0, 0, 6, 4]]
-
-grid10 = [
-		[1, 0, 6, 5, 4, 3],
-		[5, 0, 4, 6, 2, 1],
-		[6, 1, 3, 0, 5, 2],
-		[2, 4, 5, 3, 1, 6],
-		[4, 6, 1, 2, 3, 5],
-		[3, 5, 2, 1, 6, 4]]
+#Hard grid 6
+grid6 = [
+		[0, 2, 0, 0, 0, 0, 0, 1, 0],
+		[0, 0, 6, 0, 4, 0, 0, 0, 0],
+		[5, 8, 0, 0, 9, 0, 0, 0, 3],
+		[0, 0, 0, 0, 0, 3, 0, 0, 4],
+		[4, 1, 0, 0, 8, 0, 6, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 9, 5],
+		[2, 0, 0, 0, 1, 0, 0, 8, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 3, 1, 0, 0, 8, 0, 5, 7]]
 
 
-grids = [(grid1, 2, 2), (grid2, 2, 2), (grid3, 2, 2), (grid4, 2, 2), 
-		 (grid5, 3, 3), (grid6,3,3), (grid7, 3, 3), 
-		 (grid8, 2, 3), (grid9, 2, 3), (grid10, 2, 3)]
+
+grids = [(grid1, 3, 3), (grid2, 3, 3), (grid3, 2, 3), (grid4, 3, 3), 
+		 (grid5, 3, 3), (grid6,3,3)]
 
 explanation = []
 
@@ -313,10 +296,11 @@ def solve(grid, n_rows, n_cols):
 	- A solved Sudoku puzzle grid as a 2D list of integers, or None if no solution was found.
 
 	"""
-		
+	time.sleep(0)	
 	# We set the minimun value of depth as 1
 	return recursive_solve(grid, n_rows, n_cols, args.explain, args.hint, 1)
-
+	
+		
 
 
 # The function calls two other functions
@@ -334,18 +318,18 @@ def measure_performance():
  
 	print("Running performance measurement")
 	print("====================================\n")
-	compare_different_size()
+	
 	compare_different_difficulty()
 
 
 
-def compare_different_size():
+def compare_different_difficulty():
 	"""
-	Compare the performance of sudoku solvers in terms of time for grids of different sizes.
+	Compare the performance of sudoku solvers in terms of time for grids of different levels of difficulty.
 
-	This function measures the time taken to solve 100 instances of each grid size (2x2, 3x2, 3x3) using the 
-	'solve' function. The elapsed time for each run is added to a corresponding list ('time_for_2x2', 
-	'time_for_3x2', or 'time_for_3x3'), and the average time for each grid size is calculated. A bar graph is 
+	This function measures the time taken to solve 100 instances of each grid difficulty (easy, medium, hard) using the 
+	'solve' function. The elapsed time for each run is added to a corresponding list ('time_for_easygrid', 
+	'time_for_mediumgrid2', or 'time_for_hardgrid'), and the average time for each grid size is calculated. A bar graph is 
 	then plotted with grid size on the x-axis and average time on the y-axis.
 
 	Args:
@@ -355,148 +339,71 @@ def compare_different_size():
 		None
 	"""
  
-	print("\nMeasuring the performance of solvers in terms of time for grids of different size")
+	print("\nMeasuring the performance of solvers in terms of time for grids of different difficulty")
 	print("====================================")
-	# For grids of size 2x2, the elapsed time for each run is added to time_for_2x2 list
-	time_for_2x2 = []
-	# For grids of size 3x2, the elapsed time is added to time_for_3x2 list
-	time_for_3x2 = []
-	# For grids of size 3x3, the elapsed time is added to time_for_3x3 list
-	time_for_3x3 = []
+	# For easy grids, the elapsed time for each run is added to time_for_easygrid list
+	time_for_easygrid = []
+	# For medium grids, the elapsed time is added to time_for_mediumgrid list
+	time_for_mediumgrid = []
+	# For hard grids, the elapsed time is added to time_for_hardgrid list
+	time_for_hardgrid = []
 
 	for (i, (grid, n_rows, n_cols)) in enumerate(grids):
-		if i in [0, 1, 2, 3]:
+		if i in [0, 1, 2]:
 			# We run these codes 100 times to get average value
 			for _ in range(100):
 				start_time = time.time()
 				solve(grid, n_rows, n_cols)
 				elapsed_time = time.time() - start_time
-				time_for_2x2.append(elapsed_time)
-		elif i in [4, 5, 6]:
+				time_for_easygrid.append(elapsed_time)
+		elif i in [3,4]:
 			for _ in range(100):
 				start_time = time.time()
 				solve(grid, n_rows, n_cols)
 				elapsed_time = time.time() - start_time
-				time_for_3x3.append(elapsed_time)
+				time_for_mediumgrid.append(elapsed_time)
 		else:
 			for _ in range(100):
 				start_time = time.time()
 				solve(grid, n_rows, n_cols)
 				elapsed_time = time.time() - start_time
-				time_for_3x2.append(elapsed_time)
+				time_for_hardgrid.append(elapsed_time)
 
-	avg_time_for_2x2 = sum(time_for_2x2) / len(time_for_2x2)
-	avg_time_for_3x2 = sum(time_for_3x2) / len(time_for_3x2)
-	avg_time_for_3x3 = sum(time_for_3x3) / len(time_for_3x3)
+	avg_time_for_easygrid = sum(time_for_easygrid) / len(time_for_easygrid)
+	avg_time_for_mediumgrid = sum(time_for_mediumgrid) / len(time_for_mediumgrid)
+	avg_time_for_hardgrid = sum(time_for_hardgrid) / len(time_for_hardgrid)
 
-	plt.bar(["2x2", "3x2", "3x3"], [avg_time_for_2x2, avg_time_for_3x2, avg_time_for_3x3])
-	plt.xlabel("Grid Size")
+	plt.bar(["Easy grids", "Meadium grids", "Hard grid"], [avg_time_for_easygrid, avg_time_for_mediumgrid, avg_time_for_hardgrid])
+	plt.xlabel("Grid Difficulty")
 	plt.ylabel("Average Time")
-	plt.title("the performance of solvers in terms of time for grids of different size")
+	plt.title("The performance of the normal solver in terms of time for grids of different level of difficulty")
 	plt.show()
 
-
-def compare_different_difficulty():
-	"""
-	Measures the performance of the `solve` function in terms of time for grids of different difficulties.
-
-	Args: 
-		None
-	
-	Returns:
-		None
-	"""
- 
-	print("\nMeasuring the performance of solvers in terms of time for grids of different difficulties")
-	print("====================================")
-	grid = [[6, 1, 9, 8, 4, 2, 5, 3, 7, ],
-			[7, 4, 5, 3, 6, 9, 1, 8, 2, ],
-			[8, 3, 2, 1, 7, 5, 4, 6, 9, ],
-			[1, 5, 8, 6, 9, 7, 3, 2, 4, ],
-			[9, 6, 4, 2, 3, 1, 8, 7, 5, ],
-			[2, 7, 3, 5, 8, 4, 6, 9, 1, ],
-			[4, 8, 7, 9, 5, 6, 2, 1, 3, ],
-			[3, 9, 1, 4, 2, 8, 7, 5, 6, ],
-			[5, 2, 6, 7, 1, 3, 9, 4, 8, ]]
-	# We crean empty dictionary dic to store the elapsed time for each difficulty level
-	dic = {}
-	# For each difficulty level (increasing from 1 to 60)
-	for i in range(60):
-		# The unfilled location increasing by one after this code is run once
-		num_of_unfilled_locations = i+1
-		# It randomly selects a location in the grid that is not already empty, empties it
-		dic[num_of_unfilled_locations] = []
-		row = random.randint(0, 8)
-		col = random.randint(0, 8)
-		while grid[row][col] == 0:
-			row = random.randint(0, 8)
-			col = random.randint(0, 8)
-		grid[row][col] = 0
-		grid_copy = copy.deepcopy(grid)
-		# We runs the solver 100 times
-		for _ in range(100):
-			start_time = time.time()
-			solve(grid_copy, 3, 3)
-			elapsed_time = time.time() - start_time
-			# It stores the elapsed time in the corresponding list in dic
-			dic[num_of_unfilled_locations].append(elapsed_time)
-
-	num_of_unfilled_locations_list = []
-	# The average elapsed time for each difficulty level is stored in avg_elapsed_time_list
-	avg_elapsed_time_list = []
-
-	for num_of_unfilled_locations, elapsed_time_list in dic.items():
-		num_of_unfilled_locations_list.append(num_of_unfilled_locations)
-		avg_elapsed_time = sum(elapsed_time_list) / len(elapsed_time_list)
-		avg_elapsed_time_list.append(avg_elapsed_time)
-		
-	# It plots a bar chart showing the average elapsed time for each difficulty level
-	plt.bar(num_of_unfilled_locations_list, avg_elapsed_time_list)
-	plt.xlabel("Number of Unfilled Locations")
-	plt.ylabel("Average Time")
-	plt.title("the performance of solvers in terms of time for grids of different difficulties (specified by number of unfilled locations)")
-	plt.show()
-
-
-
-def hint(grid):
-	"""
-	Generates a hint for the user by randomly filling in N empty cells in the given Sudoku grid.
-
-	Args:
-	- grid (list): A 2D list representing the Sudoku grid.
-
-	Returns:
-	None. Prints the hint grid, which is a copy of the original grid with N cells filled in with valid values.
-	"""
- 
-	# make a copy of the grid
-	hint_grid = copy.deepcopy(grid)
-	# randomly choose N cells to fill in
-	cells = random.sample([(i, j) for i in range(4) for j in range(4) if grid[i][j] == 0], args.hint)
-	for cell in cells:
-		# fill in the cell with a random valid value
-		row, col = cell
-		values = [i for i in range(1, 5) if check_solution(hint_grid, row, col)]
-		hint_grid[row][col] = random.choice(values)
-	# print the hint grid
-	for row in hint_grid:
-		print(row)
 
 #Below all relate to the wavefront algorithm
 
-def wavefront_present_values(grid, row, col): 
+def wavefront_present_values(grid, row, col, rows, cols): 
 	'''
 	Function returning the values present in each row column and square of
 	a given element of the sudoku grid.
 	   
 	'''
-	box_row = (row // 3) * 3  #(not finished) Uses remainder division to split the 9x9 sudoku grid into a 3x3 grid of 3x3 squares
-	box_col = (col // 3) * 3
+	#Use of if statements to decide how to allocate the dimensions of subsquares in the sudoku grid based on the dimensions of the sudoku grid
+	if rows < 9:
+		row_divisor, row_multiplier = 2, 2
+	else:
+		row_divisor, row_multiplier = 3, 3
+	if cols < 6:
+		cols_divisor, cols_multiplier = 2, 2
+	else:
+		cols_divisor, cols_multiplier = 3, 3
+
+	box_row = (row // row_divisor) * row_multiplier #Uses remainder division and multiplication to attain the list indicies squares and thus detect the values in a square
+	box_col = (col // cols_divisor) * cols_multiplier
 	square = []
 	
-	for i in range(3):
-		for j in range(3):
+	for i in range(row_divisor):
+		for j in range(cols_divisor):
 			if str(grid[box_row + i][box_col + j]).isnumeric() and grid[box_row + i][box_col + j] > 0:
 				square.append(grid[box_row + i][box_col + j])  #casts the elements in the square as string to be able to test if they are numeric and above zero
 	
@@ -527,7 +434,7 @@ def wavefront_present_values(grid, row, col):
 	return wavefront_present_values
 
 
-def wavefront_amend_lists(grid, row, col, value):
+def wavefront_amend_lists(grid, row, col, value, rows, cols):
 	'''
 	Function to amend the lists of available numbers for unfilled elements 
 	in the sudoku grid after an element has been filled
@@ -540,17 +447,27 @@ def wavefront_amend_lists(grid, row, col, value):
 		if list_test == True and (value in amend_row):
 			amend_row.remove(value)
 			
-	for amend_col in range(9):
+	for amend_col in range(rows):
 		list_test2 = isinstance(grid[amend_col][col], list)
 		if list_test2 == True and (value in grid[amend_col][col]):
 			grid[amend_col][col].remove(value)
 			
-	box_row = (row // 3) * 3 #repeat of technique used in wavefront_present_values function to attain the values in a square
-	box_col = (col // 3) * 3
+	if rows < 9:
+		row_divisor, row_multiplier = 2, 2
+	else:
+		row_divisor, row_multiplier = 3, 3
+        
+	if cols < 6:
+		cols_divisor, cols_multiplier = 2, 2
+	else:
+		cols_divisor, cols_multiplier = 3, 3
+        
+	box_row = (row // row_divisor) * row_multiplier #repeat of technique used in present_values function to attain the values in a square
+	box_col = (col // cols_divisor) * cols_multiplier
 	square = []
 	
-	for i in range(3):
-		for j in range(3):
+	for i in range(row_divisor):
+		for j in range(cols_divisor):
 			if str(grid[box_row + i][box_col + j]).isnumeric() and grid[box_row + i][box_col + j] > 0:
 				square.append(grid[box_row + i][box_col + j])
 				
@@ -562,40 +479,50 @@ def wavefront_amend_lists(grid, row, col, value):
 	return grid        
 
 
-def wavefront_fill_cells(grid):
+def wavefront_fill_cells(grid, rows, cols):
 	'''
 	Function used to fill all elements that display '0' 
 	of the initially entered sudoku list with the numbers that are able to be entered into that element
 	Uses the wavefront_present_values() function to do this
 	Returns the amended sudoku grid
 	'''
-	values = [1,2,3,4,5,6,7,8,9] #initial list of all possible values
+	if rows == 9:
+		values = [1,2,3,4,5,6,7,8,9]#initial list of all possible values, depending on dimensions of the sudoku grid
+	elif rows == 6:
+		values = [1,2,3,4,5,6]
+	elif rows == 4:
+		values = [1,2,3,4]
 	empties = [] #contains the lists of values that are able to be entered into each empty element
 	counter = 0
 	
-	for row in range(9):
-		for col in range(9):
+	for row in range(rows):
+		for col in range(cols):
 			if grid[row][col] == 0:
-				not_allowed = wavefront_present_values(grid, row, col)
+				not_allowed = wavefront_present_values(grid, row, col, rows, cols)
 				for i in not_allowed:
 					if i in values:
 						values.remove(i) #removes values from the list of all possible values if they are already present in the row, col or square
 				empties.append(values)
-				values = [1,2,3,4,5,6,7,8,9]
+				if rows == 9:
+					values = [1,2,3,4,5,6,7,8,9]
+				elif rows == 6:
+					values = [1,2,3,4,5,6]
+				elif rows == 4:
+					values = [1,2,3,4]
 				
-	for row in range(9):
-		for col in range(9):
+	for row in range(rows):
+		for col in range(cols):
 			if grid[row][col] == 0:
 				grid[row][col] = empties[counter]
 				counter += 1
 	
 	return grid
 
-def wavefront_smallest_empty(grid):
+def wavefront_smallest_empty(grid, rows, cols):
 	smallest = [1,2,3,4,5,6,7,8,9]
 	
-	for row in range(9):
-		for col in range(9):
+	for row in range(rows):
+		for col in range(cols):
 			test = isinstance(grid[row][col], list)
 			if test == True and len(grid[row][col]) == 0:
 				return grid              
@@ -604,7 +531,7 @@ def wavefront_smallest_empty(grid):
 				smallest_row, smallest_col = row, col
 
 	grid[smallest_row][smallest_col] = random.choice(smallest)
-	wavefront_amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col])
+	wavefront_amend_lists(grid, smallest_row, smallest_col, grid[smallest_row][smallest_col], rows, cols)
 	
 	return grid
 	
@@ -615,64 +542,53 @@ def wavefront_is_solved(grid):
 		if test == True:
 			return False
 	return True
-
-def wavefront_is_unsolved(grid):
-	for row in range(9):
-		for col in range(9):
-			test = isinstance(grid[row][col], list)
-			if test == True and len(grid[row][col]) == 0:
-				return True
-			
-	return False
 			
 
 def wavefront_solve(grid):
 	'''
 	Main function to solve the initally sudoku grid that is entered 
 	''' 
-	wavefront_fill_cells(grid) #fills all cells containing 0 with a list of numbers that are possible to be placed 
+	rows = len(grid) #finds the number of rows and collumns in the grid
+	cols = len(grid[0])
+	wavefront_fill_cells(grid, rows, cols) #fills all cells containing 0 with a list of numbers that are possible to be placed 
 	attempts = 0
 	
 	while attempts < 200:
 		attempts += 1
 		
 		for i in range(9):
-			for row in range(9):
-				for col in range(9):
+			for row in range(rows):
+				for col in range(cols):
 					list_test = isinstance(grid[row][col], list)
 					if list_test == True and len(grid[row][col]) == 1:
 						grid[row][col] = (grid[row][col])[0]
-						wavefront_amend_lists(grid, row, col, grid[row][col])
+						wavefront_amend_lists(grid, row, col, grid[row][col], rows, cols)
 		
 		
 		if wavefront_is_solved(grid) == False:
-			wavefront_smallest_empty(grid)
+			wavefront_smallest_empty(grid, rows, cols)
 		elif wavefront_is_solved(grid) == True:
 			return grid  
 			
 	print("Failed Attempt")
 	print(grid)
 	
-	
+	time.sleep(1)
+
 	
 			
 	return None         
-				
-
 
 def main():
 
 	# initialize points counter
-	points = 0
 	algorithm = input("Which algorithm do you want to use? Wavefront: W, Normal: N \n").upper()
 	if algorithm == "W":
 		wavefront = True
 	else:
 		wavefront = False
 
-	# if --hint flag is used, print a hint for grid5
-	if args.hint:
-		hint(grid5)
+	
 
 	# if --file flag is used, read the grid from file
 	if args.file:
@@ -701,52 +617,73 @@ def main():
 
 	# if --profile flag is used, measure the performance of the solve function
 	elif args.profile:
-		measure_performance()
+
+		if wavefront:
+			wavefront_times = []
+			normal_times = []
+			for (i, (grid, n_rows, n_cols)) in enumerate(grids):				
+					# measure the solving time for normal solver
+						start_time = time.time()
+						result = solve(grid, n_rows, n_cols)
+						end_time = time.time()
+						final_time = float(end_time - start_time)
+						print("Wavefront solver solving time:", final_time)
+						wavefront_times.append(final_time)
+
+			for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+				start_time = time.time()
+				solution = solve(grid, n_rows, n_cols)
+				end_time = time.time()
+				final_time = float(end_time - start_time)
+				print("Normal solver solving time:", final_time)
+				normal_times.append(final_time)
+
+			print("====================================")
+			print("Wavefront solving times: ", wavefront_times)
+			print("Mean solving time for the Wavefront algorithm: ", statistics.mean(wavefront_times))
+			print("\n")
+			print("Normal solving times: ", normal_times)
+			print("Mean solving time for the Normal algorithm: ", statistics.mean(normal_times))
+		else:
+			measure_performance()
 
 	# if no flags are used, run the test script on all grids
 	else:
 		if wavefront == True:
-				print(wavefront_solve([
-					[0, 0, 0, 6, 0, 0, 0, 0, 0],
-					[0, 0, 0, 0, 0, 0, 5, 0, 1],
-					[3, 6, 9, 0, 8, 0, 4, 0, 0],
-					[0, 0, 0, 0, 0, 6, 8, 0, 0],
-					[0, 0, 0, 1, 3, 0, 0, 0, 9],
-					[4, 0, 5, 0, 0, 9, 0, 0, 0],
-					[0, 0, 0, 0, 0, 0, 3, 0, 0],
-					[0, 0, 6, 0, 0, 7, 0, 0, 0],
-					[1, 0, 0, 3, 4, 0, 0, 0, 0]]))
-
-				print(wavefront_solve([
-						[9, 0, 6, 0, 0, 1, 0, 4, 0],
-						[7, 0, 1, 2, 9, 0, 0, 6, 0],
-						[4, 0, 2, 8, 0, 6, 3, 0, 0],
-						[0, 0, 0, 0, 2, 0, 9, 8, 0], 
-						[6, 0, 0, 0, 0, 0, 0, 0, 2],
-						[0, 9, 4, 0, 8, 0, 0, 0, 0],
-						[0, 0, 3, 7, 0, 8, 4, 0, 9],
-						[0, 4, 0, 0, 1, 3, 7, 0, 6],
-						[0, 6, 0, 9, 0, 0, 1, 0, 8]]))
-		if wavefront == False:
-			print("Running test script for coursework 1")
-			print("====================================")
-	
-			for (i, (grid, n_rows, n_cols)) in enumerate(grids):
-				print("Solving grid: %d" % (i+1))
+				print("====================================")
+				print("Solving grid 1")
 				start_time = time.time()
-				solution = solve(grid, n_rows, n_cols)
+				print(wavefront_solve(grid1))
 				elapsed_time = time.time() - start_time
 				print("Solved in: %f seconds" % elapsed_time)
-				print(solution)
-				# check if the solution is correct and update points counter
-				if check_solution(solution, n_rows, n_cols):
-					print("grid %d correct" % (i+1))
-					points = points + 10
-				else:
-					print("grid %d incorrect" % (i+1))
+
+				print("Solving grid 2")
+				start_time = time.time()
+				print(wavefront_solve(grid2))
+				elapsed_time = time.time() - start_time
+				print("Solved in: %f seconds" % elapsed_time)
+
+		if wavefront == False:
+			print("====================================")
+			for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+				if args.hint:
+					print("Hint for grid ", i)
+					solution = solve(grid, n_rows, n_cols)
+				if args.hint is None:
+					print("Solving grid: %d" % (i+1))
+					start_time = time.time()
+					solution = solve(grid, n_rows, n_cols)
+					elapsed_time = time.time() - start_time
+					print("Solved in: %f seconds" % elapsed_time)
+					print(solution)
+					# check if the solution is correct and update points counter
+					if check_solution(solution, n_rows, n_cols):
+						print("grid %d correct" % (i+1))
+					else:
+						print("grid %d incorrect" % (i+1))
 
 			print("====================================")
-			print("Test script complete, Total points: %d" % points)
+			print("Script complete")
 
 
 
