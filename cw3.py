@@ -349,33 +349,55 @@ def compare_different_difficulty():
 	time_for_hardgrid = []
 
 	for (i, (grid, n_rows, n_cols)) in enumerate(grids):
+		# Determine the difficulty level of the Sudoku puzzle
 		if i in [0, 1, 2]:
 			# We run these codes 100 times to get average value
 			for _ in range(100):
+				# Record the start time and the end time
 				start_time = time.time()
+				# Solve easy Sudoku puzzles
 				solve(grid, n_rows, n_cols)
+				# Calculate the elapsed time of easy grids by subtracting the start time from the end time
 				elapsed_time = time.time() - start_time
+				# The elapsed time is added to the time_for_easygrid
 				time_for_easygrid.append(elapsed_time)
+		# Determine the difficulty level of the Sudoku puzzle
 		elif i in [3,4]:
 			for _ in range(100):
+				# Record the start time and the end time
 				start_time = time.time()
+				# Solve medium Sudoku puzzles
 				solve(grid, n_rows, n_cols)
+				# Calculate the elapsed time of medium grids by subtracting the start time from the end time
 				elapsed_time = time.time() - start_time
+				# The elapsed time is added to the time_for_mediumgrid
 				time_for_mediumgrid.append(elapsed_time)
+		# Determine the difficulty level of the Sudoku puzzle
 		else:
 			for _ in range(100):
+				# Record the start time and the end time
 				start_time = time.time()
+				# Solve hard Sudoku puzzles
 				solve(grid, n_rows, n_cols)
+				# Calculate the elapsed time of hard grids by subtracting the start time from the end time
 				elapsed_time = time.time() - start_time
+				# The elapsed time is added to the time_for_hardgrid
 				time_for_hardgrid.append(elapsed_time)
 
+	#The code calculate the average time taken to solve easy puzzles
 	avg_time_for_easygrid = sum(time_for_easygrid) / len(time_for_easygrid)
+	#The code calculate the average time taken to solve medium puzzles
 	avg_time_for_mediumgrid = sum(time_for_mediumgrid) / len(time_for_mediumgrid)
+	#The code calculate the average time taken to solve hard puzzles
 	avg_time_for_hardgrid = sum(time_for_hardgrid) / len(time_for_hardgrid)
 
+	# Create the bar graph, where the x-axis labels are the three different difficulty levels
 	plt.bar(["Easy grids", "Meadium grids", "Hard grid"], [avg_time_for_easygrid, avg_time_for_mediumgrid, avg_time_for_hardgrid])
+	# Add labels to the x-axis of the graph
 	plt.xlabel("Grid Difficulty")
+	# Add labels to the y-axis of the graph
 	plt.ylabel("Average Time")
+	# Add labels to title of the graph
 	plt.title("The performance of the normal solver in terms of time for grids of different level of difficulty")
 	plt.show()
 
